@@ -1,0 +1,538 @@
+---
+title: "Chapter 2: Sentencing"
+output: html_notebook
+---
+
+
+Inputting Functions 
+```{r}
+library(ggplot2)
+library(tidyverse)
+library(dplyr)
+library(lubridate)
+library(scales)
+library(tidyverse)
+library(sf)
+library(haven)
+library(knitr)
+install.packages("kableExtra")
+library(data.table)
+install.packages(c("readxl", "writexl"))
+library("writexl")
+library(broom)
+install.packages("pander")
+library(pander)
+library(scales)
+install.packages("estimatr")
+library(estimatr)
+library(kableExtra)
+library(rvest)
+library(stringr)
+install.packages("webshot2")
+library(webshot2)
+install.packages("stargazer")
+library(stargazer)
+install.packages("WRS2")
+install.packages("mc2d")
+library(mc2d)
+library(WRS2)
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+Input Data for California
+https://www.courts.ca.gov/38232.htm#felony-sentencing-trends
+
+```{r}
+
+California_County_Level_Sentences<- read.csv(
+  "C:/Users/carol/Downloads/cjr-prop47-Dashboard-Data.csv",
+  header = TRUE,
+  check.names = TRUE
+)
+
+```
+
+
+Definitions: 
+Probation: allows individuals to remain in the community under county probation supervision for all or a portion of their sentence. They may serve up to one year in jail as a condition of their supervision. 
+Straight and split sentences: include non-serious, non-violent, and non-sexual felony offenses. 
+Straight sentence: an individual will serve their full term in county jail and then be released without supervision. 
+Split sentence: an individual typically “splits” their term between jail time and community supervision. Occasionally individuals with a split sentence will serve their entire term supervised in the community with no jail time. 
+Prison Sentence: the individual will be incarcerated, serving their sentence in state prison, and typically be released on parole or PRCS.
+Since Realignment, individuals released from prison for non-serious, non-violent, and non-sexual offenses are typically supervised by county probation departments under Post Release Community Supervision (PRCS). Mandatory Supervision (MS) is the community supervision portion of a split sentence.
+
+```{r}
+California_County_Level_Sentences <- California_County_Level_Sentences %>%
+  rename(
+    Probation = Q4,
+    Prison = Q3,
+    Split_1170h = Q6,
+    Straight_1170h = Q5,
+    Probation_Petition = Q7,
+    PRCS_Petition = Q18,
+    MS_Petition = Q12,
+    Parole_Petition = Q26)
+
+California_County_Level_Sentences <- California_County_Level_Sentences %>%
+  unite(County_and_Quarter, County, Quarter, remove=FALSE)
+
+California_County_Level_Sentences
+
+
+
+
+```
+Upload CA DA data
+
+```{r}
+
+California_DA_election_data<- read.csv(
+  "C:/Users/carol/Desktop/California_DAs_Excel.csv",
+  header = TRUE,
+  check.names = TRUE
+)
+
+```
+
+Merge two dataframes
+
+```{r}
+
+California_Merged_Data <- merge(California_County_Level_Sentences, California_DA_election_data, by="County_and_Quarter")
+
+```
+
+
+New York Counties 
+
+```{r}
+
+New_York_County_Level_Sentences <- read.csv(
+  "C:/Users/carol/Desktop/NY_State_County_Level_Sentencing.csv",
+  header = TRUE,
+  check.names = TRUE
+)
+```
+
+New York DA 
+
+```{r}
+
+New_York_DA <- read.csv(
+  "C:/Users/carol/Desktop/NY_DA_Excel.csv",
+  header = TRUE,
+  check.names = TRUE
+)
+
+colnames(New_York_DA)
+
+New_York_DA <- New_York_DA %>% 
+       rename("County_and_Quarter" = "ï..County_and_Quarter",
+              "Decarceratory" = "Decarceratory.",
+              "Party" = "Party.",
+            "Did_Incumbent_Seek_Reelection" =  "Did.Incumbent.Seek.Reelection.",
+           "If_Sought_Reelection_Did_Incumbent_Win" = "If.Sought.Reelection..Did.Incumbent.Win." ,
+           "Contested_Primary" = "Contested.Primary." ,
+           "Contested_General" = "Contested.General." ,
+           "Election_Year" = "Election.Year." )
+
+```
+
+
+Merge two dataframes
+
+```{r}
+
+NY_Merged_Data <- merge(New_York_County_Level_Sentences, New_York_DA, by="County_and_Quarter")
+
+NY_Merged_Data <- NY_Merged_Data %>%
+  mutate(Decarceratory = Decarceratory %>%
+           as.factor,
+         Election_Year = Election_Year %>%
+           as.factor,
+         Prison = Prison %>%
+           as.numeric , 
+         Probation = Probation %>%
+           as.numeric , 
+         Total = Total %>%
+           as.numeric)
+
+NY_Merged_Data <- NY_Merged_Data %>%
+  mutate(Percentage_Prison = Prison / Total * 100,
+           Percentage_Jail = Jail / Total * 100 ,
+         Percentage_Jail_and_Probation = Jail.and.Probation / Total * 100,
+         Percentage_Probation = Probation / Total * 100,
+         Percentage_Fine = Fine / Total * 100,
+         Percentage_Cond_Disc = Cond.Discharge / Total * 100)
+
+
+
+```
+
+Analyzing NY Data
+
+```{r}
+
+
+Prison_Sentences_by_Decarceratory <- aov(data = NY_Merged_Data , Percentage_Prison ~ Decarceratory)
+
+summary(Prison_Sentences_by_Decarceratory)
+
+
+TukeyHSD(Prison_Sentences_by_Decarceratory)
+
+
+wilcox.test(NY_Merged_Data %>%
+              filter(Decarceratory == 1) %>%
+              select(Percentage_Prison) %>%
+              na.omit %>%
+              unlist, 
+            NY_Merged_Data %>%
+              filter(Decarceratory == 0) %>%
+              select(Percentage_Prison) %>%
+              na.omit %>%
+              unlist)
+
+#still comparing medians
+
+med1way(data = NY_Merged_Data ,
+        Percentage_Prison ~ Decarceratory)
+
+med2way(data = NY_Merged_Data ,
+        Percentage_Prison ~ Decarceratory + Election_Year)
+
+#boxplot
+
+NY_Merged_Data %>%
+  ggplot(aes(fill = Election_Year, x = Decarceratory , y = Percentage_Prison)) + geom_boxplot() + facet_wrap(~ Election_Year) 
+
+#is there a correlation between probation and prison
+
+cor.test(data = NY_Merged_Data , 
+         ~ Prison + Probation)
+
+#graph above
+
+NY_Merged_Data %>%
+  ggplot(aes(color = Party , x = Prison , y = Probation)) + geom_point()
+
+```
+
+Pennsylvania 2013 Getting Proper Numbers
+
+```{r}
+
+Pennsylvania_2013_Sentences <- read.csv(
+  "C:/Users/carol/Downloads/GEN_2013_NO_SID.csv",
+  header = TRUE,
+  check.names = TRUE
+)
+
+
+Pennsylvania_2013_Sentences <- Pennsylvania_2013_Sentences %>%
+  mutate(quarter = DOS %>%
+           as.POSIXct(format = "%m/%d/%Y") %>%
+          quarter()) 
+
+#next are all within the MS_SANCTION column
+
+#prob(5), jail(3), prison(1)
+
+Pennsylvania_Sanctions <- Pennsylvania_2013_Sentences %>%
+  group_by(COUNTY, quarter, MS_SANCTION) %>%
+  count()  
+
+write.csv(Pennsylvania_Sanctions,  "C:/Users/carol/Downloads/Pennsylvania_Sanctions.csv", row.names=FALSE)
+
+#conform(above, aggravated, below, mitigated, procedural, standard)
+
+Pennsylvania_Conform <- Pennsylvania_2013_Sentences %>%
+  group_by(COUNTY, quarter, CONFORM) %>%
+  count() 
+
+
+
+```
+
+Pennsylvania 2014 Numbers
+
+```{r}
+
+Pennsylvania_2014_Sentences <- read.csv(
+  "C:/Users/carol/Downloads/GEN_2014_NO_SID.csv",
+  header = TRUE,
+  check.names = TRUE
+)
+
+
+Pennsylvania_2014_Sentences <- Pennsylvania_2014_Sentences %>%
+  mutate(quarter = DOS %>%
+           as.POSIXct(format = "%m/%d/%Y") %>%
+          quarter()) 
+
+#next are all within the MS_SANCTION column
+
+#prob(5), jail(3), prison(1)
+
+Pennsylvania_Sanctions_2014 <- Pennsylvania_2014_Sentences %>%
+  group_by(COUNTY, quarter, MS_SANCTION) %>%
+  count()  
+
+write.csv(Pennsylvania_Sanctions_2014,  "C:/Users/carol/Downloads/Pennsylvania_Sanctions_2014.csv", row.names=FALSE)
+
+#conform(above, aggravated, below, mitigated, procedural, standard)
+
+Pennsylvania_Conform_2014 <- Pennsylvania_2014_Sentences %>%
+  group_by(COUNTY, quarter, CONFORM) %>%
+  count() 
+
+
+```
+
+Pennsylvania 2015 Numbers
+
+```{r}
+
+Pennsylvania_2015_Sentences <- read.csv(
+  "C:/Users/carol/Downloads/GEN_2015_NO_SID.csv",
+  header = TRUE,
+  check.names = TRUE
+)
+
+
+Pennsylvania_2015_Sentences <- Pennsylvania_2015_Sentences %>%
+  mutate(quarter = DOS %>%
+           as.POSIXct(format = "%m/%d/%Y") %>%
+          quarter()) 
+
+#next are all within the MS_SANCTION column
+
+#prob(5), jail(3), prison(1)
+
+Pennsylvania_Sanctions_2015 <- Pennsylvania_2015_Sentences %>%
+  group_by(COUNTY, quarter, MS_SANCTION) %>%
+  count()  
+
+write.csv(Pennsylvania_Sanctions_2015,  "C:/Users/carol/Downloads/Pennsylvania_Sanctions_2015.csv", row.names=FALSE)
+
+#conform(above, aggravated, below, mitigated, procedural, standard)
+
+Pennsylvania_Conform_2015 <- Pennsylvania_2015_Sentences %>%
+  group_by(COUNTY, quarter, CONFORM) %>%
+  count() 
+
+
+```
+
+Pennsylvania 2016 Numbers
+
+```{r}
+
+Pennsylvania_2016_Sentences <- read.csv(
+  "C:/Users/carol/Downloads/GEN_2016_NO_SID.csv",
+  header = TRUE,
+  check.names = TRUE
+)
+
+
+Pennsylvania_2016_Sentences <- Pennsylvania_2016_Sentences %>%
+  mutate(quarter = DOS %>%
+           as.POSIXct(format = "%m/%d/%Y") %>%
+          quarter()) 
+
+#next are all within the MS_SANCTION column
+
+#prob(5), jail(3), prison(1)
+
+Pennsylvania_Sanctions_2016 <- Pennsylvania_2016_Sentences %>%
+  group_by(COUNTY, quarter, MS_SANCTION) %>%
+  count()  
+
+write.csv(Pennsylvania_Sanctions_2016,  "C:/Users/carol/Downloads/Pennsylvania_Sanctions_2016.csv", row.names=FALSE)
+
+#conform(above, aggravated, below, mitigated, procedural, standard)
+
+Pennsylvania_Conform_2016 <- Pennsylvania_2016_Sentences %>%
+  group_by(COUNTY, quarter, CONFORM) %>%
+  count() 
+
+
+```
+
+
+```{r}
+
+Pennsylvania_2017_Sentences <- read.csv(
+  "C:/Users/carol/Downloads/GEN_2017_NO_SID.csv",
+  header = TRUE,
+  check.names = TRUE
+)
+
+
+Pennsylvania_2017_Sentences <- Pennsylvania_2017_Sentences %>%
+  mutate(quarter = DOS %>%
+           as.POSIXct(format = "%m/%d/%Y") %>%
+          quarter()) 
+
+#next are all within the MS_SANCTION column
+
+#prob(5), jail(3), prison(1)
+
+Pennsylvania_Sanctions_2017 <- Pennsylvania_2017_Sentences %>%
+  group_by(COUNTY, quarter, MS_SANCTION) %>%
+  count()  
+
+write.csv(Pennsylvania_Sanctions_2017,  "C:/Users/carol/Downloads/Pennsylvania_Sanctions_2017.csv", row.names=FALSE)
+
+#conform(above, aggravated, below, mitigated, procedural, standard)
+
+Pennsylvania_Conform_2017 <- Pennsylvania_2017_Sentences %>%
+  group_by(COUNTY, quarter, CONFORM) %>%
+  count() 
+
+Pennsylvania_2018_Sentences <- read.csv(
+  "C:/Users/carol/Downloads/GEN_2018_NO_SID.csv",
+  header = TRUE,
+  check.names = TRUE
+)
+
+
+Pennsylvania_2018_Sentences <- Pennsylvania_2018_Sentences %>%
+  mutate(quarter = DOS %>%
+           as.POSIXct(format = "%m/%d/%Y") %>%
+          quarter()) 
+
+#next are all within the MS_SANCTION column
+
+#prob(5), jail(3), prison(1)
+
+Pennsylvania_Sanctions_2018 <- Pennsylvania_2018_Sentences %>%
+  group_by(COUNTY, quarter, MS_SANCTION) %>%
+  count()  
+
+write.csv(Pennsylvania_Sanctions_2018,  "C:/Users/carol/Downloads/Pennsylvania_Sanctions_2018.csv", row.names=FALSE)
+
+#conform(above, aggravated, below, mitigated, procedural, standard)
+
+Pennsylvania_Conform_2018 <- Pennsylvania_2018_Sentences %>%
+  group_by(COUNTY, quarter, CONFORM) %>%
+  count() 
+
+Pennsylvania_2019_Sentences <- read.csv(
+  "C:/Users/carol/Downloads/GEN_2019_NO_SID.csv",
+  header = TRUE,
+  check.names = TRUE
+)
+
+#this is not working. Quarter is NA here.
+
+Pennsylvania_2019_Sentences <- Pennsylvania_2019_Sentences %>%
+  mutate(quarter = DOS %>%
+           as.POSIXct(format = "%m/%d/%Y") %>%
+          quarter()) 
+
+
+#next are all within the MS_SANCTION column
+
+#prob(5), jail(3), prison(1)
+
+Pennsylvania_Sanctions_2019 <- Pennsylvania_2019_Sentences %>%
+  group_by(COUNTY, quarter, MS_SANCTION) %>%
+  count()  
+
+write.csv(Pennsylvania_Sanctions_2019,  "C:/Users/carol/Downloads/Pennsylvania_Sanctions_2019.csv", row.names=FALSE)
+
+#conform(above, aggravated, below, mitigated, procedural, standard)
+
+Pennsylvania_Conform_2019 <- Pennsylvania_2019_Sentences %>%
+  group_by(COUNTY, quarter, CONFORM) %>%
+  count() 
+
+Pennsylvania_2020_Sentences <- read.csv(
+  "C:/Users/carol/Downloads/GEN_2020_NO_SID.csv",
+  header = TRUE,
+  check.names = TRUE
+)
+
+
+Pennsylvania_2020_Sentences <- Pennsylvania_2020_Sentences %>%
+  mutate(quarter = DOS %>%
+           as.POSIXct(format = "%m/%d/%Y") %>%
+          quarter()) 
+
+#next are all within the MS_SANCTION column
+
+#prob(5), jail(3), prison(1)
+
+Pennsylvania_Sanctions_2020 <- Pennsylvania_2020_Sentences %>%
+  group_by(COUNTY, quarter, MS_SANCTION) %>%
+  count()  
+
+write.csv(Pennsylvania_Sanctions_2020,  "C:/Users/carol/Downloads/Pennsylvania_Sanctions_2020.csv", row.names=FALSE)
+
+Pennsylvania_2021_Sentences <- read.csv(
+  "C:/Users/carol/Downloads/GEN_2021_NO_SID.csv",
+  header = TRUE,
+  check.names = TRUE
+)
+
+Pennsylvania_2021_Sentences <- Pennsylvania_2021_Sentences %>%
+  mutate(quarter = DOS %>%
+           as.POSIXct(format = "%m/%d/%Y") %>%
+          quarter()) 
+
+#conform(above, aggravated, below, mitigated, procedural, standard)
+
+Pennsylvania_Conform_2021 <- Pennsylvania_2021_Sentences %>%
+  group_by(COUNTY, quarter, CONFORM) %>%
+  count()
+
+
+Pennsylvania_2021_Sentences <- Pennsylvania_2021_Sentences %>%
+  mutate(quarter = DOS %>%
+           as.POSIXct(format = "%m/%d/%Y") %>%
+          quarter()) 
+
+#next are all within the MS_SANCTION column
+
+#prob(5), jail(3), prison(1)
+
+Pennsylvania_Sanctions_2021 <- Pennsylvania_2021_Sentences %>%
+  group_by(COUNTY, quarter, MS_SANCTION) %>%
+  count()  
+
+write.csv(Pennsylvania_Sanctions_2021,  "C:/Users/carol/Downloads/Pennsylvania_Sanctions_2021.csv", row.names=FALSE)
+
+#conform(above, aggravated, below, mitigated, procedural, standard)
+
+Pennsylvania_Conform_2021 <- Pennsylvania_2021_Sentences %>%
+  group_by(COUNTY, quarter, CONFORM) %>%
+  count()
+
+```
+
+
+```{r}
+PA_State_County_Level_Sentencing <- read.csv(
+  "C:/Users/carol/Desktop/PA_State_County_Level_Sentencing.csv",
+  header = TRUE,
+  check.names = TRUE
+)
+
+PA_State_County_Level_Sentencing_with_Year <- PA_State_County_Level_Sentencing %>%
+  mutate(Year = case_when(str_detect(County_and_Quarter, "2013") ~ "2013", 
+                         str_detect(County_and_Quarter, "2014") ~ "2014",
+                         str_detect(County_and_Quarter, "2015") ~ "2015",
+                         str_detect(County_and_Quarter, "2016") ~ "2016",
+                         str_detect(County_and_Quarter, "2017") ~ "2017",
+                         str_detect(County_and_Quarter, "2018") ~ "2018",
+                         str_detect(County_and_Quarter, "2019") ~ "2019",
+                         str_detect(County_and_Quarter, "2020") ~ "2020",
+                         str_detect(County_and_Quarter, "2021") ~ "2021"))
+
+
+write.csv(PA_State_County_Level_Sentencing_with_Year,  "C:/Users/carol/Downloads/PA_State_County_Level_Sentencing_with_Year.csv", row.names = FALSE)
+
+
+```
