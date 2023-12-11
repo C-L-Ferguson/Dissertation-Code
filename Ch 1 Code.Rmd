@@ -3,16 +3,94 @@ title: "Chapter 1--Arrests"
 output: html_notebook
 ---
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
-
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+Merge CA, ND, and OH marijuana votes with arrest data
 
 ```{r}
-plot(cars)
+
+
+California_Marijuana_Data <- read.csv(
+  "C:/Users/carol/Downloads/California_Marijuana.csv",
+  header = TRUE,
+  check.names = TRUE
+)
+
+str(California_Marijuana_Data)
+
+California_Marijuana_Data <- California_Marijuana_Data %>%
+  rename("County" = "ï..County")
+
+CA_2006_2016<- read.csv(
+  "C:/Users/carol/Downloads/CA_2006_2016.csv",
+  header = TRUE,
+  check.names = TRUE
+)
+
+
+CA_2006_2016 <- merge(CA_2006_2016, California_Marijuana_Data, by="County")
+
+write.csv(CA_2006_2016,  "C:/Users/carol/Downloads/CA_2006_2016.csv", row.names=FALSE)
+
+#NORTH DAKOTA 
+
+ND_Marijuana_Data <- read.csv(
+  "C:/Users/carol/Downloads/ND_Marijuana.csv",
+  header = TRUE,
+  check.names = TRUE
+)
+
+str(ND_Marijuana_Data)
+
+ND_Marijuana_Data <- ND_Marijuana_Data %>%
+  rename("County" = "ï..County")
+
+ND_2012_2020 <- read.csv(
+  "C:/Users/carol/Downloads/ND_2012_2020.csv",
+  header = TRUE,
+  check.names = TRUE
+)
+
+str(ND_2012_2020)
+
+ND_2012_2020 <- ND_2012_2020 %>%
+  rename("County" = "ctnm")
+
+ND_2012_2020 <- merge(ND_2012_2020, ND_Marijuana_Data, by="County")
+
+write.csv(ND_2012_2020,  "C:/Users/carol/Downloads/ND_2012_2020.csv", row.names=FALSE)
+
+#OHIO
+
+OH_Marijuana_Data <- read.csv(
+  "C:/Users/carol/Downloads/OH_Marijuana.csv",
+  header = TRUE,
+  check.names = TRUE
+)
+
+str(OH_Marijuana_Data)
+
+OH_Marijuana_Data <- OH_Marijuana_Data %>%
+  rename("County" = "ï..County")
+
+OH_2010_2020 <- read.csv(
+  "C:/Users/carol/Downloads/OH_2010_2020.csv",
+  header = TRUE,
+  check.names = TRUE
+)
+
+str(OH_2010_2020)
+
+OH_2010_2020 <- OH_2010_2020 %>%
+  rename("County" = "ctnm")
+
+OH_2010_2020 <- merge(OH_2010_2020, OH_Marijuana_Data, by="County")
+
+write.csv(OH_2010_2020,  "C:/Users/carol/Downloads/OH_2010_2020.csv", row.names=FALSE)
+
 ```
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+Let's run some regressions
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+```{r}
 
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+```
+

@@ -215,21 +215,29 @@ pre code {
 
 
 <!-- rnb-text-begin -->
-<p>This is an <a href="http://rmarkdown.rstudio.com">R Markdown</a> Notebook. When you execute code within the notebook, the results appear beneath the code.</p>
-<p>Try executing this chunk by clicking the <em>Run</em> button within the chunk or by placing your cursor inside it and pressing <em>Ctrl+Shift+Enter</em>.</p>
+<p>Merge CA, ND, and OH marijuana votes with arrest data</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGxvdChjYXJzKVxuYGBgIn0= -->
-<pre class="r"><code>plot(cars)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxud3JpdGUuY3N2KE9IXzIwMTBfMjAyMCwgIFwiQzovVXNlcnMvY2Fyb2wvRG93bmxvYWRzL09IXzIwMTBfMjAyMC5jc3ZcIiwgcm93Lm5hbWVzPUZBTFNFKVxuXG5gYGAifQ== -->
+<pre class="r"><code>write.csv(OH_2010_2020,  &quot;C:/Users/carol/Downloads/OH_2010_2020.csv&quot;, row.names=FALSE)
+</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiV2FybmluZyBpbiBmaWxlKGZpbGUsIGlmZWxzZShhcHBlbmQsIFwiYVwiLCBcIndcIikpIDpcbiAgY2Fubm90IG9wZW4gZmlsZSAnQzovVXNlcnMvY2Fyb2wvRG93bmxvYWRzL09IXzIwMTBfMjAyMC5jc3YnOiBQZXJtaXNzaW9uIGRlbmllZFxuRXJyb3IgaW4gZmlsZShmaWxlLCBpZmVsc2UoYXBwZW5kLCBcImFcIiwgXCJ3XCIpKSA6IFxuICBjYW5ub3Qgb3BlbiB0aGUgY29ubmVjdGlvblxuIn0= -->
+<pre><code>Warning in file(file, ifelse(append, &quot;a&quot;, &quot;w&quot;)) :
+  cannot open file &#39;C:/Users/carol/Downloads/OH_2010_2020.csv&#39;: Permission denied
+Error in file(file, ifelse(append, &quot;a&quot;, &quot;w&quot;)) : 
+  cannot open the connection</code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>Add a new chunk by clicking the <em>Insert Chunk</em> button on the toolbar or by pressing <em>Ctrl+Alt+I</em>.</p>
-<p>When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the <em>Preview</em> button or press <em>Ctrl+Shift+K</em> to preview the HTML file).</p>
-<p>The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike <em>Knit</em>, <em>Preview</em> does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.</p>
+<p>Let’s run some regressions</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIkNoYXB0ZXIgMS0tQXJyZXN0cyINCm91dHB1dDogaHRtbF9ub3RlYm9vaw0KLS0tDQoNClRoaXMgaXMgYW4gW1IgTWFya2Rvd25dKGh0dHA6Ly9ybWFya2Rvd24ucnN0dWRpby5jb20pIE5vdGVib29rLiBXaGVuIHlvdSBleGVjdXRlIGNvZGUgd2l0aGluIHRoZSBub3RlYm9vaywgdGhlIHJlc3VsdHMgYXBwZWFyIGJlbmVhdGggdGhlIGNvZGUuIA0KDQpUcnkgZXhlY3V0aW5nIHRoaXMgY2h1bmsgYnkgY2xpY2tpbmcgdGhlICpSdW4qIGJ1dHRvbiB3aXRoaW4gdGhlIGNodW5rIG9yIGJ5IHBsYWNpbmcgeW91ciBjdXJzb3IgaW5zaWRlIGl0IGFuZCBwcmVzc2luZyAqQ3RybCtTaGlmdCtFbnRlciouIA0KDQpgYGB7cn0NCnBsb3QoY2FycykNCmBgYA0KDQpBZGQgYSBuZXcgY2h1bmsgYnkgY2xpY2tpbmcgdGhlICpJbnNlcnQgQ2h1bmsqIGJ1dHRvbiBvbiB0aGUgdG9vbGJhciBvciBieSBwcmVzc2luZyAqQ3RybCtBbHQrSSouDQoNCldoZW4geW91IHNhdmUgdGhlIG5vdGVib29rLCBhbiBIVE1MIGZpbGUgY29udGFpbmluZyB0aGUgY29kZSBhbmQgb3V0cHV0IHdpbGwgYmUgc2F2ZWQgYWxvbmdzaWRlIGl0IChjbGljayB0aGUgKlByZXZpZXcqIGJ1dHRvbiBvciBwcmVzcyAqQ3RybCtTaGlmdCtLKiB0byBwcmV2aWV3IHRoZSBIVE1MIGZpbGUpLg0KDQpUaGUgcHJldmlldyBzaG93cyB5b3UgYSByZW5kZXJlZCBIVE1MIGNvcHkgb2YgdGhlIGNvbnRlbnRzIG9mIHRoZSBlZGl0b3IuIENvbnNlcXVlbnRseSwgdW5saWtlICpLbml0KiwgKlByZXZpZXcqIGRvZXMgbm90IHJ1biBhbnkgUiBjb2RlIGNodW5rcy4gSW5zdGVhZCwgdGhlIG91dHB1dCBvZiB0aGUgY2h1bmsgd2hlbiBpdCB3YXMgbGFzdCBydW4gaW4gdGhlIGVkaXRvciBpcyBkaXNwbGF5ZWQuDQo=</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIkNoYXB0ZXIgMS0tQXJyZXN0cyINCm91dHB1dDogaHRtbF9ub3RlYm9vaw0KLS0tDQoNCk1lcmdlIENBLCBORCwgYW5kIE9IIG1hcmlqdWFuYSB2b3RlcyB3aXRoIGFycmVzdCBkYXRhDQoNCmBgYHtyfQ0KDQoNCkNhbGlmb3JuaWFfTWFyaWp1YW5hX0RhdGEgPC0gcmVhZC5jc3YoDQogICJDOi9Vc2Vycy9jYXJvbC9Eb3dubG9hZHMvQ2FsaWZvcm5pYV9NYXJpanVhbmEuY3N2IiwNCiAgaGVhZGVyID0gVFJVRSwNCiAgY2hlY2submFtZXMgPSBUUlVFDQopDQoNCnN0cihDYWxpZm9ybmlhX01hcmlqdWFuYV9EYXRhKQ0KDQpDYWxpZm9ybmlhX01hcmlqdWFuYV9EYXRhIDwtIENhbGlmb3JuaWFfTWFyaWp1YW5hX0RhdGEgJT4lDQogIHJlbmFtZSgiQ291bnR5IiA9ICLDry4uQ291bnR5IikNCg0KQ0FfMjAwNl8yMDE2PC0gcmVhZC5jc3YoDQogICJDOi9Vc2Vycy9jYXJvbC9Eb3dubG9hZHMvQ0FfMjAwNl8yMDE2LmNzdiIsDQogIGhlYWRlciA9IFRSVUUsDQogIGNoZWNrLm5hbWVzID0gVFJVRQ0KKQ0KDQoNCkNBXzIwMDZfMjAxNiA8LSBtZXJnZShDQV8yMDA2XzIwMTYsIENhbGlmb3JuaWFfTWFyaWp1YW5hX0RhdGEsIGJ5PSJDb3VudHkiKQ0KDQp3cml0ZS5jc3YoQ0FfMjAwNl8yMDE2LCAgIkM6L1VzZXJzL2Nhcm9sL0Rvd25sb2Fkcy9DQV8yMDA2XzIwMTYuY3N2Iiwgcm93Lm5hbWVzPUZBTFNFKQ0KDQojTk9SVEggREFLT1RBIA0KDQpORF9NYXJpanVhbmFfRGF0YSA8LSByZWFkLmNzdigNCiAgIkM6L1VzZXJzL2Nhcm9sL0Rvd25sb2Fkcy9ORF9NYXJpanVhbmEuY3N2IiwNCiAgaGVhZGVyID0gVFJVRSwNCiAgY2hlY2submFtZXMgPSBUUlVFDQopDQoNCnN0cihORF9NYXJpanVhbmFfRGF0YSkNCg0KTkRfTWFyaWp1YW5hX0RhdGEgPC0gTkRfTWFyaWp1YW5hX0RhdGEgJT4lDQogIHJlbmFtZSgiQ291bnR5IiA9ICLDry4uQ291bnR5IikNCg0KTkRfMjAxMl8yMDIwIDwtIHJlYWQuY3N2KA0KICAiQzovVXNlcnMvY2Fyb2wvRG93bmxvYWRzL05EXzIwMTJfMjAyMC5jc3YiLA0KICBoZWFkZXIgPSBUUlVFLA0KICBjaGVjay5uYW1lcyA9IFRSVUUNCikNCg0Kc3RyKE5EXzIwMTJfMjAyMCkNCg0KTkRfMjAxMl8yMDIwIDwtIE5EXzIwMTJfMjAyMCAlPiUNCiAgcmVuYW1lKCJDb3VudHkiID0gImN0bm0iKQ0KDQpORF8yMDEyXzIwMjAgPC0gbWVyZ2UoTkRfMjAxMl8yMDIwLCBORF9NYXJpanVhbmFfRGF0YSwgYnk9IkNvdW50eSIpDQoNCndyaXRlLmNzdihORF8yMDEyXzIwMjAsICAiQzovVXNlcnMvY2Fyb2wvRG93bmxvYWRzL05EXzIwMTJfMjAyMC5jc3YiLCByb3cubmFtZXM9RkFMU0UpDQoNCiNPSElPDQoNCk9IX01hcmlqdWFuYV9EYXRhIDwtIHJlYWQuY3N2KA0KICAiQzovVXNlcnMvY2Fyb2wvRG93bmxvYWRzL09IX01hcmlqdWFuYS5jc3YiLA0KICBoZWFkZXIgPSBUUlVFLA0KICBjaGVjay5uYW1lcyA9IFRSVUUNCikNCg0Kc3RyKE9IX01hcmlqdWFuYV9EYXRhKQ0KDQpPSF9NYXJpanVhbmFfRGF0YSA8LSBPSF9NYXJpanVhbmFfRGF0YSAlPiUNCiAgcmVuYW1lKCJDb3VudHkiID0gIsOvLi5Db3VudHkiKQ0KDQpPSF8yMDEwXzIwMjAgPC0gcmVhZC5jc3YoDQogICJDOi9Vc2Vycy9jYXJvbC9Eb3dubG9hZHMvT0hfMjAxMF8yMDIwLmNzdiIsDQogIGhlYWRlciA9IFRSVUUsDQogIGNoZWNrLm5hbWVzID0gVFJVRQ0KKQ0KDQpzdHIoT0hfMjAxMF8yMDIwKQ0KDQpPSF8yMDEwXzIwMjAgPC0gT0hfMjAxMF8yMDIwICU+JQ0KICByZW5hbWUoIkNvdW50eSIgPSAiY3RubSIpDQoNCk9IXzIwMTBfMjAyMCA8LSBtZXJnZShPSF8yMDEwXzIwMjAsIE9IX01hcmlqdWFuYV9EYXRhLCBieT0iQ291bnR5IikNCg0Kd3JpdGUuY3N2KE9IXzIwMTBfMjAyMCwgICJDOi9Vc2Vycy9jYXJvbC9Eb3dubG9hZHMvT0hfMjAxMF8yMDIwLmNzdiIsIHJvdy5uYW1lcz1GQUxTRSkNCg0KYGBgDQoNCkxldCdzIHJ1biBzb21lIHJlZ3Jlc3Npb25zDQoNCmBgYHtyfQ0KDQpgYGANCg0K</div>
 
 
 
