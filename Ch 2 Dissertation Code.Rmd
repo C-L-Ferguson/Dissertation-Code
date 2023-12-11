@@ -425,12 +425,15 @@ Pennsylvania_2019_Sentences <- read.csv(
   check.names = TRUE
 )
 
+str(Pennsylvania_2019_Sentences$DOS)
+
 #this is not working. Quarter is NA here.
+
 
 Pennsylvania_2019_Sentences <- Pennsylvania_2019_Sentences %>%
   mutate(quarter = DOS %>%
-           as.POSIXct(format = "%m/%d/%Y") %>%
-          quarter()) 
+           as.POSIXct(format = "%d-%b-%y") %>%
+           quarter())
 
 
 #next are all within the MS_SANCTION column
@@ -458,7 +461,7 @@ Pennsylvania_2020_Sentences <- read.csv(
 
 Pennsylvania_2020_Sentences <- Pennsylvania_2020_Sentences %>%
   mutate(quarter = DOS %>%
-           as.POSIXct(format = "%m/%d/%Y") %>%
+           as.POSIXct(format = "%d-%b-%y") %>%
           quarter()) 
 
 #next are all within the MS_SANCTION column
@@ -477,21 +480,10 @@ Pennsylvania_2021_Sentences <- read.csv(
   check.names = TRUE
 )
 
-Pennsylvania_2021_Sentences <- Pennsylvania_2021_Sentences %>%
-  mutate(quarter = DOS %>%
-           as.POSIXct(format = "%m/%d/%Y") %>%
-          quarter()) 
-
-#conform(above, aggravated, below, mitigated, procedural, standard)
-
-Pennsylvania_Conform_2021 <- Pennsylvania_2021_Sentences %>%
-  group_by(COUNTY, quarter, CONFORM) %>%
-  count()
-
 
 Pennsylvania_2021_Sentences <- Pennsylvania_2021_Sentences %>%
   mutate(quarter = DOS %>%
-           as.POSIXct(format = "%m/%d/%Y") %>%
+           as.POSIXct(format = "%d-%b-%y") %>%
           quarter()) 
 
 #next are all within the MS_SANCTION column
@@ -504,11 +496,7 @@ Pennsylvania_Sanctions_2021 <- Pennsylvania_2021_Sentences %>%
 
 write.csv(Pennsylvania_Sanctions_2021,  "C:/Users/carol/Downloads/Pennsylvania_Sanctions_2021.csv", row.names=FALSE)
 
-#conform(above, aggravated, below, mitigated, procedural, standard)
 
-Pennsylvania_Conform_2021 <- Pennsylvania_2021_Sentences %>%
-  group_by(COUNTY, quarter, CONFORM) %>%
-  count()
 
 ```
 
