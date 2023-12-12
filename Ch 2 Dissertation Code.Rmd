@@ -172,54 +172,7 @@ write.csv(NY_Merged_Data, "C:/Users/carol/Downloads/NY_Merged_Data.csv", row.nam
 
 ```
 
-Analyzing NY Data
 
-```{r}
-
-
-Prison_Sentences_by_Decarceratory <- aov(data = NY_Merged_Data , Percentage_Prison ~ Decarceratory)
-
-summary(Prison_Sentences_by_Decarceratory)
-
-
-TukeyHSD(Prison_Sentences_by_Decarceratory)
-
-
-wilcox.test(NY_Merged_Data %>%
-              filter(Decarceratory == 1) %>%
-              select(Percentage_Prison) %>%
-              na.omit %>%
-              unlist, 
-            NY_Merged_Data %>%
-              filter(Decarceratory == 0) %>%
-              select(Percentage_Prison) %>%
-              na.omit %>%
-              unlist)
-
-#still comparing medians
-
-med1way(data = NY_Merged_Data ,
-        Percentage_Prison ~ Decarceratory)
-
-med2way(data = NY_Merged_Data ,
-        Percentage_Prison ~ Decarceratory + Election_Year)
-
-#boxplot
-
-NY_Merged_Data %>%
-  ggplot(aes(fill = Election_Year, x = Decarceratory , y = Percentage_Prison)) + geom_boxplot() + facet_wrap(~ Election_Year) 
-
-#is there a correlation between probation and prison
-
-cor.test(data = NY_Merged_Data , 
-         ~ Prison + Probation)
-
-#graph above
-
-NY_Merged_Data %>%
-  ggplot(aes(color = Party , x = Prison , y = Probation)) + geom_point()
-
-```
 
 Pennsylvania 2013 Getting Proper Numbers
 
@@ -554,7 +507,56 @@ PA_DAs <- read.csv(
 
 PA_Merged_Data <- merge(PA_Sentencing, PA_DAs, by="County_and_Quarter")
 
-write.csv(PA_Merged_Data, "C:/Users/carol/Downloads/PA_Sentencing.csv", row.names = FALSE)
+write.csv(PA_Merged_Data, "C:/Users/carol/Downloads/PA_Merged_Data.csv", row.names = FALSE)
 
 ```
 
+
+Analyzing NY Data
+
+```{r}
+
+
+Prison_Sentences_by_Decarceratory <- aov(data = NY_Merged_Data , Percentage_Prison ~ Decarceratory)
+
+summary(Prison_Sentences_by_Decarceratory)
+
+
+TukeyHSD(Prison_Sentences_by_Decarceratory)
+
+
+wilcox.test(NY_Merged_Data %>%
+              filter(Decarceratory == 1) %>%
+              select(Percentage_Prison) %>%
+              na.omit %>%
+              unlist, 
+            NY_Merged_Data %>%
+              filter(Decarceratory == 0) %>%
+              select(Percentage_Prison) %>%
+              na.omit %>%
+              unlist)
+
+#still comparing medians
+
+med1way(data = NY_Merged_Data ,
+        Percentage_Prison ~ Decarceratory)
+
+med2way(data = NY_Merged_Data ,
+        Percentage_Prison ~ Decarceratory + Election_Year)
+
+#boxplot
+
+NY_Merged_Data %>%
+  ggplot(aes(fill = Election_Year, x = Decarceratory , y = Percentage_Prison)) + geom_boxplot() + facet_wrap(~ Election_Year) 
+
+#is there a correlation between probation and prison
+
+cor.test(data = NY_Merged_Data , 
+         ~ Prison + Probation)
+
+#graph above
+
+NY_Merged_Data %>%
+  ggplot(aes(color = Party , x = Prison , y = Probation)) + geom_point()
+
+```
