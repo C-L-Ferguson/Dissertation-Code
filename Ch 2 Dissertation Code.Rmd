@@ -101,6 +101,8 @@ Merge two dataframes
 
 California_Merged_Data <- merge(California_County_Level_Sentences, California_DA_election_data, by="County_and_Quarter")
 
+write.csv(California_Merged_Data, "C:/Users/carol/Downloads/California_Merged_Data.csv", row.names=FALSE)
+
 ```
 
 
@@ -166,7 +168,7 @@ NY_Merged_Data <- NY_Merged_Data %>%
          Percentage_Fine = Fine / Total * 100,
          Percentage_Cond_Disc = Cond.Discharge / Total * 100)
 
-
+write.csv(NY_Merged_Data, "C:/Users/carol/Downloads/NY_Merged_Data.csv", row.names=FALSE)
 
 ```
 
@@ -524,3 +526,35 @@ write.csv(PA_State_County_Level_Sentencing_with_Year,  "C:/Users/carol/Downloads
 
 
 ```
+
+Merging PA Info
+
+```{r}
+PA_Sentencing <- read.csv(
+  "C:/Users/carol/Downloads/PA_Sentencing.csv",
+  header = TRUE,
+  check.names = TRUE
+)
+
+#prob(5), jail(3), prison(1)
+
+PA_Sentencing <- PA_Sentencing %>%
+  rename("County_Jail" = "X3",
+         "State_Prison" = "X1",
+         "Probation" = "X5",
+         "Restorative_Sanction" = "X6",
+         "Restrictive_intermediate_punishment" = "X4", 
+         "State_intermediate_punishment" = "X2")
+
+PA_DAs <- read.csv(
+  "C:/Users/carol/Downloads/PA_DA.csv",
+  header = TRUE,
+  check.names = TRUE
+)
+
+PA_Merged_Data <- merge(PA_Sentencing, PA_DAs, by="County_and_Quarter")
+
+write.csv(PA_Merged_Data, "C:/Users/carol/Downloads/PA_Sentencing.csv", row.names = FALSE)
+
+```
+
