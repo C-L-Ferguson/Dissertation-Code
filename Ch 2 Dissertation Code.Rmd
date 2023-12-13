@@ -61,6 +61,8 @@ Straight sentence: an individual will serve their full term in county jail and t
 Split sentence: an individual typically “splits” their term between jail time and community supervision. Occasionally individuals with a split sentence will serve their entire term supervised in the community with no jail time. 
 Prison Sentence: the individual will be incarcerated, serving their sentence in state prison, and typically be released on parole or PRCS.
 Since Realignment, individuals released from prison for non-serious, non-violent, and non-sexual offenses are typically supervised by county probation departments under Post Release Community Supervision (PRCS). Mandatory Supervision (MS) is the community supervision portion of a split sentence.
+FTA Warrent = Presentence Warrants for Failure to Appear (FTAs) in Felony Cases
+
 
 ```{r}
 California_County_Level_Sentences <- California_County_Level_Sentences %>%
@@ -72,7 +74,11 @@ California_County_Level_Sentences <- California_County_Level_Sentences %>%
     Probation_Petition = Q7,
     PRCS_Petition = Q18,
     MS_Petition = Q12,
-    Parole_Petition = Q26)
+    Parole_Petition = Q26,
+    FTA_Warrent = Q2,
+    Petition_for_Modification = Q1,
+    FTA_Warrant = Q2,
+    Petition_for_Modification = Q1)
 
 California_County_Level_Sentences <- California_County_Level_Sentences %>%
   unite(County_and_Quarter, County, Quarter, remove=FALSE)
@@ -95,13 +101,25 @@ California_DA_election_data<- read.csv(
 
 ```
 
-Merge two dataframes
+Merge two dataframes and add percentages of sentences
 
 ```{r}
 
+
+
 California_Merged_Data <- merge(California_County_Level_Sentences, California_DA_election_data, by="County_and_Quarter")
 
+California_Merged_Data <- California_Merged_Data %>%
+  mutate(Total_Sentences = Prison + Probation + Split_1170h + Straight_1170h)
+
+California_Merged_Data <- California_Merged_Data %>%
+  mutate(Percentage_Prison = Prison / Total_Sentences * 100,
+           Percentage_Probation = Probation / Total_Sentences * 100 ,
+         Percentage_Split = Split_1170h / Total_Sentences * 100,
+         Percentage_Straight = Straight_1170h / Total_Sentences * 100)
+
 write.csv(California_Merged_Data, "C:/Users/carol/Downloads/California_Merged_Data.csv", row.names=FALSE)
+
 
 ```
 
@@ -517,12 +535,12 @@ Analyzing NY Data
 ```{r}
 
 
-Prison_Sentences_by_Decarceratory <- aov(data = NY_Merged_Data , Percentage_Prison ~ Decarceratory)
+NY_Prison_Sentences_by_Decarceratory <- aov(data = NY_Merged_Data , Percentage_Prison ~ Decarceratory)
 
-summary(Prison_Sentences_by_Decarceratory)
+summary(NY_Prison_Sentences_by_Decarceratory)
 
 
-TukeyHSD(Prison_Sentences_by_Decarceratory)
+TukeyHSD(NY_Prison_Sentences_by_Decarceratory)
 
 
 wilcox.test(NY_Merged_Data %>%
@@ -560,3 +578,52 @@ NY_Merged_Data %>%
   ggplot(aes(color = Party , x = Prison , y = Probation)) + geom_point()
 
 ```
+
+Analyzing CA Data
+```{r}
+
+CA_Prison_Sentences_by_Decarceratory <- aov(data = California_Merged_Data , Percentage_Prison ~ Decarceratory.)
+
+summary(CA_Prison_Sentences_by_Decarceratory)
+
+
+TukeyHSD(CA_Prison_Sentences_by_Decarceratory)
+
+
+wilcox.test(California_Merged_Data %>%
+              filter(Decarceratory. == 1) %>%
+              select(Percentage_Prison) %>%
+              na.omit %>%
+              unlist, 
+            California_Merged_Data %>%
+              filter(Decarceratory. == 0) %>%
+              select(Percentage_Prison) %>%
+              na.omit %>%
+              unlist)
+
+#still comparing medians
+
+med1way(data = California_Merged_Data ,
+        Percentage_Prison ~ Decarceratory.)
+
+med2way(data = California_Merged_Data ,
+        Percentage_Prison ~ Decarceratory. + Election.Year.)
+
+#boxplot
+
+California_Merged_Data %>%
+  ggplot(aes(fill = Election.Year., x = Decarceratory. , y = Percentage_Prison)) + geom_boxplot() + facet_wrap(~ Election.Year.) 
+
+#is there a correlation between probation and prison
+
+cor.test(data = California_Merged_Data , 
+         ~ Percentage_Prison + Percentage_Probation)
+
+#graph above
+
+California_Merged_Data %>%
+  ggplot(aes(color = Decarceratory. , x = Prison , y = Probation)) + geom_point()
+
+```
+```
+
