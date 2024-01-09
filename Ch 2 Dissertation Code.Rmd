@@ -529,6 +529,29 @@ write.csv(PA_Merged_Data, "C:/Users/carol/Downloads/PA_Merged_Data.csv", row.nam
 
 ```
 
+Load all cleaned data
+
+```{r}
+
+NY_Merged_Data<- read.csv(
+  "C:/Users/carol/Downloads/NY_Merged_Data.csv",
+  header = TRUE,
+  check.names = TRUE
+)
+
+PA_Merged_Data<- read.csv(
+  "C:/Users/carol/Downloads/PA_Merged_Data.csv",
+  header = TRUE,
+  check.names = TRUE
+)
+
+CA_Merged_Data <- read.csv(
+  "C:/Users/carol/Downloads/CA_Merged_Data.csv",
+  header = TRUE,
+  check.names = TRUE
+)
+
+```
 
 Analyzing NY Data
 
