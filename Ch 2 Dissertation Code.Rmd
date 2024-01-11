@@ -605,7 +605,7 @@ NY_Merged_Data %>%
 Analyzing CA Data
 ```{r}
 
-CA_Prison_Sentences_by_Decarceratory <- aov(data = California_Merged_Data , Percentage_Prison ~ Decarceratory.)
+CA_Prison_Sentences_by_Decarceratory <- aov(data = CA_Merged_Data , Percentage_Prison ~ Decarceratory.)
 
 summary(CA_Prison_Sentences_by_Decarceratory)
 
@@ -613,12 +613,12 @@ summary(CA_Prison_Sentences_by_Decarceratory)
 TukeyHSD(CA_Prison_Sentences_by_Decarceratory)
 
 
-wilcox.test(California_Merged_Data %>%
+wilcox.test(CA_Merged_Data %>%
               filter(Decarceratory. == 1) %>%
               select(Percentage_Prison) %>%
               na.omit %>%
               unlist, 
-            California_Merged_Data %>%
+            CA_Merged_Data %>%
               filter(Decarceratory. == 0) %>%
               select(Percentage_Prison) %>%
               na.omit %>%
@@ -626,25 +626,25 @@ wilcox.test(California_Merged_Data %>%
 
 #still comparing medians
 
-med1way(data = California_Merged_Data ,
+med1way(data = CA_Merged_Data ,
         Percentage_Prison ~ Decarceratory.)
 
-med2way(data = California_Merged_Data ,
+med2way(data = CA_Merged_Data ,
         Percentage_Prison ~ Decarceratory. + Election.Year.)
 
 #boxplot
 
-California_Merged_Data %>%
+CA_Merged_Data %>%
   ggplot(aes(fill = Election.Year., x = Decarceratory. , y = Percentage_Prison)) + geom_boxplot() + facet_wrap(~ Election.Year.) 
 
 #is there a correlation between probation and prison
 
-cor.test(data = California_Merged_Data , 
+cor.test(data = v , 
          ~ Percentage_Prison + Percentage_Probation)
 
 #graph above
 
-California_Merged_Data %>%
+CA_Merged_Data %>%
   ggplot(aes(color = Decarceratory. , x = Prison , y = Probation)) + geom_point()
 
 ```
