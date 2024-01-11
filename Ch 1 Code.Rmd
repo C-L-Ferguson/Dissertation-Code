@@ -94,41 +94,43 @@ Load all clean data
 CA_2006_2016<- read.csv(
   "C:/Users/carol/Downloads/CA_2006_2016.csv",
   header = TRUE,
-  check.names = TRUE
+  check.names = F
 )
 
 AZ_2006_2016<- read.csv(
   "C:/Users/carol/Downloads/AZ_2006_2016.csv",
   header = TRUE,
-  check.names = TRUE
+  check.names = F
 )
 
 CO_2000_2010 <- read.csv(
   "C:/Users/carol/Downloads/CO_2000_2010.csv",
   header = TRUE,
-  check.names = TRUE
+  check.names = F
 )
 
 OH_2010_2020 <- read.csv(
   "C:/Users/carol/Downloads/OH_2010_2020.csv",
   header = TRUE,
-  check.names = TRUE
+  check.names = F
 )
 
 ND_2012_2020<- read.csv(
   "C:/Users/carol/Downloads/ND_2012_2020.csv",
   header = TRUE,
-  check.names = TRUE
+  check.names = F
 )
 
 #note that OH has no counties that voted YES so it's kind of useless. 
-#note, arizona's election was 2016 so we are missing the improtant years to see a chnage. Email John
+#note, arizona's election was 2016 so we are missing the important years to see a change. Email John
 
 ```
 
 Let's run some regressions
 
 ```{r}
+
+
 
 ```
 
