@@ -97,8 +97,8 @@ CA_2006_2016<- read.csv(
   check.names = F
 )
 
-AZ_2006_2016<- read.csv(
-  "C:/Users/carol/Downloads/AZ_2006_2016.csv",
+AZ_2006_2020<- read.csv(
+  "C:/Users/carol/Downloads/AZ_2006_2020.csv",
   header = TRUE,
   check.names = F
 )
@@ -122,7 +122,7 @@ ND_2012_2020<- read.csv(
 )
 
 #note that OH has no counties that voted YES so it's kind of useless. 
-#note, arizona's election was 2016 so we are missing the important years to see a change. Email John
+
 
 ```
 
@@ -130,7 +130,84 @@ Let's run some regressions
 
 ```{r}
 
+colnames(CA_2006_2016)[2]<-"year"  
+#California
 
+CA_2006_2016 <-
+  CA_2006_2016 %>%
+  mutate(rc_tot = rc_tot %>% 
+           str_remove_all(",") %>%
+           as.numeric())
+
+
+wilcox.test(CA_2006_2016 %>%
+              filter(year <= 2010) %>%
+            select(rc_tot) %>%
+              unlist , CA_2006_2016 %>%
+  filter(year > 2010) %>%
+  select(rc_tot) %>%
+  unlist)
+
+CA_2006_2016 %>%
+  ggplot(aes(x = year, y = rc_tot, group = year)) + geom_boxplot()
+
+
+#yes vs no counties without year consideration 
+
+wilcox.test(CA_2006_2016 %>%
+              filter(Approved.Prop. == "Y") %>%
+            select(rc_tot) %>%
+              unlist , CA_2006_2016 %>%
+  filter(Approved.Prop. == "N") %>%
+  select(rc_tot) %>%
+  unlist)
+
+#yes v no counties comparing after 2010 prop
+
+wilcox.test(CA_2006_2016 %>%
+              filter(Approved.Prop. == "Y" , year > 2010 ) %>%
+            select(rc_tot) %>%
+              unlist , CA_2006_2016 %>%
+  filter(Approved.Prop. == "N", year > 2010 ) %>%
+  select(rc_tot) %>%
+  unlist)
+
+#there was a preexisting difference in arrest rates from those counties and then they voted yes or no, and then there wasn't a difference. 
+
+wilcox.test(CA_2006_2016 %>%
+              filter(Approved.Prop. == "Y" , year <= 2010 ) %>%
+            select(rc_tot) %>%
+              unlist , CA_2006_2016 %>%
+  filter(Approved.Prop. == "N", year <= 2010 ) %>%
+  select(rc_tot) %>%
+  unlist)
+
+#first is significant for year <= 2010, second is significant for approved.prop and third is significant for both together (how the yes, no question agumented whether before or after 2010). 
+
+med2way(data = CA_2006_2016 , rc_tot ~ factor(I(year <= 2010)) + factor(Approved.Prop.))
+
+CA_2006_2016 %>%
+  group_by(year <= 2010 , Approved.Prop.) %>%
+  summarize(rc_tot_med = median(rc_tot))
+
+#cor.test for correlations between numerics. Generally don't consider percent yes. 
+
+ggplot(CA_2006_2016, aes(x = Percent.Yes , y = rc_rate)) + geom_point()
+
+#cor.test for race differences. The two rates between black and white arrest rates are 
+
+cor.test(CA_2006_2016$w_rate , CA_2006_2016$b_rate)
+
+CA_2006_2016 %>%
+  pivot_longer(cols = c("w_rate", "b_rate" , "i_rate" , "a_rate"
+  ) , names_to = "race" , values_to = "rate") %>%
+  med1way(formula = rate ~ race)
+
+CA_2006_2016 %>%
+  pivot_longer(cols = c("w_rate", "b_rate" , "i_rate" , "a_rate"
+  ) , names_to = "race" , values_to = "rate") %>%
+  group_by(race , year > 2010 , Approved.Prop.) %>%
+  summarize(rate_med = median(na.rm = T , rate))
 
 ```
 
