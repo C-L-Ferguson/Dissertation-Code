@@ -36,6 +36,11 @@ install.packages("WRS2")
 install.packages("mc2d")
 library(mc2d)
 library(WRS2)
+options(PACKAGE_MAINFOLDER="C:/Users/...")
+install.packages("broom.mixed")
+library(broom.mixed)
+
+
 ```
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
@@ -99,9 +104,8 @@ California_DA_election_data<- read.csv(
   check.names = TRUE
 )
 
-```
 
-Merge two dataframes and add percentages of sentences
+#Merge two dataframes and add percentages of sentences
 
 ```{r}
 
@@ -118,7 +122,7 @@ California_Merged_Data <- California_Merged_Data %>%
          Percentage_Split = Split_1170h / Total_Sentences * 100,
          Percentage_Straight = Straight_1170h / Total_Sentences * 100)
 
-write.csv(California_Merged_Data, "C:/Users/carol/Downloads/California_Merged_Data.csv", row.names=FALSE)
+write.csv(CA_Merged_Data, "C:/Users/carol/Downloads/California_Merged_Data.csv", row.names=FALSE)
 
 
 ```
@@ -185,6 +189,8 @@ NY_Merged_Data <- NY_Merged_Data %>%
          Percentage_Probation = Probation / Total * 100,
          Percentage_Fine = Fine / Total * 100,
          Percentage_Cond_Disc = Cond.Discharge / Total * 100)
+
+
 
 write.csv(NY_Merged_Data, "C:/Users/carol/Downloads/NY_Merged_Data.csv", row.names=FALSE)
 
@@ -525,7 +531,47 @@ PA_DAs <- read.csv(
 
 PA_Merged_Data <- merge(PA_Sentencing, PA_DAs, by="County_and_Quarter")
 
-write.csv(PA_Merged_Data, "C:/Users/carol/Downloads/PA_Merged_Data.csv", row.names = FALSE)
+PA_Merged_Data <- PA_Merged_Data %>%
+  mutate(Decarceratory = Decarceratory. %>%
+           as.factor,
+         Election_Year = Election.Year. %>%
+           as.factor,
+         State_Prison = State_Prison %>%
+           as.numeric , 
+         Probation = Probation %>%
+           as.numeric , 
+         Total = Total %>%
+           as.numeric ,
+         County_Jail = County_Jail %>%
+           as.numeric ,
+         Restrictive_intermediate_punishment = Restrictive_intermediate_punishment %>%
+           as.numeric ,
+         Restorative_Sanction = Restorative_Sanction %>%
+           as.numeric , 
+         State_intermediate_punishment = State_intermediate_punishment %>%
+           as.numeric)
+
+PA_Merged_Data <- PA_Merged_Data %>%
+  mutate(Percentage_Prison = State_Prison / Total * 100,
+           Percentage_Jail = County_Jail / Total * 100 ,
+         Percentage_Intermediate_Punishment = State_intermediate_punishment / Total * 100,
+         Percentage_Probation = Probation / Total * 100,
+         Percentage_Restorative_Sanction = Restorative_Sanction / Total * 100)
+
+colnames(PA_Merged_Data)[2]<-"County"
+colnames(PA_Merged_Data)[11]<-"County" 
+
+PA_Merged_Data <- PA_Merged_Data %>%
+  mutate(Election.Year. = ifelse(is.na(Election.Year.), 0, Election.Year.))
+
+PA_Merged_Data <- PA_Merged_Data %>% select(-Election.Year.)
+
+PA_Merged_Data <- PA_Merged_Data %>%
+  mutate(
+         Election_Year = Election.Year. %>%
+           as.factor)
+
+write.csv(PA_Merged_Data, "C:/Users/carol/Downloads/PA_Merged_Data.csv", row.names=FALSE)
 
 ```
 
@@ -536,19 +582,19 @@ Load all cleaned data
 NY_Merged_Data<- read.csv(
   "C:/Users/carol/Downloads/NY_Merged_Data.csv",
   header = TRUE,
-  check.names = TRUE
+  check.names = F
 )
 
 PA_Merged_Data<- read.csv(
   "C:/Users/carol/Downloads/PA_Merged_Data.csv",
   header = TRUE,
-  check.names = TRUE
+  check.names = F
 )
 
 CA_Merged_Data <- read.csv(
   "C:/Users/carol/Downloads/CA_Merged_Data.csv",
   header = TRUE,
-  check.names = TRUE
+  check.names = F
 )
 
 ```
@@ -556,17 +602,29 @@ CA_Merged_Data <- read.csv(
 Analyzing NY Data
 
 ```{r}
+NY_Merged_Data <- NY_Merged_Data %>%
+  mutate(Decarceratory = Decarceratory %>%
+           as.factor,
+         Election_Year = Election_Year %>%
+           as.factor) 
+
+NY_Prison_Sentences_by_Decarceratory <- lm(data = NY_Merged_Data , Percentage_Prison ~ Decarceratory)
+
+class(NY_Prison_Sentences_by_Decarceratory)
 
 
-NY_Prison_Sentences_by_Decarceratory <- aov(data = NY_Merged_Data , Percentage_Prison ~ Decarceratory)
+stargazer(NY_Prison_Sentences_by_Decarceratory, type = "text" ,  title = "P-Test Results")
 
-summary(NY_Prison_Sentences_by_Decarceratory)
-
-
-TukeyHSD(NY_Prison_Sentences_by_Decarceratory)
+NY_Prison_Sentences_by_Decarceratory_aov <- aov(data = NY_Merged_Data , Percentage_Prison ~ Decarceratory)
 
 
-wilcox.test(NY_Merged_Data %>%
+TurkeyHSD_NY_Prison_Sentences <- TukeyHSD(NY_Prison_Sentences_by_Decarceratory_aov)
+
+tidy_turkey(TurkeyHSD_NY_Prison_Sentences)
+
+#wilcox test compares medians 
+
+wilcox_test_decarceratory <- wilcox.test(NY_Merged_Data %>%
               filter(Decarceratory == 1) %>%
               select(Percentage_Prison) %>%
               na.omit %>%
@@ -576,6 +634,9 @@ wilcox.test(NY_Merged_Data %>%
               select(Percentage_Prison) %>%
               na.omit %>%
               unlist)
+
+tidy(TurkeyHSD_NY_Prison_Sentences)
+tidy(wilcox_test_decarceratory)
 
 #still comparing medians
 
@@ -593,17 +654,23 @@ NY_Merged_Data %>%
 #is there a correlation between probation and prison
 
 cor.test(data = NY_Merged_Data , 
-         ~ Prison + Probation)
+         ~ Percentage_Prison + Percentage_Probation)
 
 #graph above
 
 NY_Merged_Data %>%
-  ggplot(aes(color = Party , x = Prison , y = Probation)) + geom_point()
+  ggplot(aes(color = Party , x = Percentage_Prison , y = Percentage_Probation)) + geom_point()
 
 ```
 
 Analyzing CA Data
 ```{r}
+
+CA_Merged_Data <- CA_Merged_Data %>%
+  mutate(Decarceratory. = Decarceratory. %>%
+           as.factor,
+         Election.Year. = Election.Year. %>%
+           as.factor) 
 
 CA_Prison_Sentences_by_Decarceratory <- aov(data = CA_Merged_Data , Percentage_Prison ~ Decarceratory.)
 
@@ -612,6 +679,7 @@ summary(CA_Prison_Sentences_by_Decarceratory)
 
 TukeyHSD(CA_Prison_Sentences_by_Decarceratory)
 
+#the above might be interesting because it's not a partisan election? I am not totally sure if that actually tells us anything
 
 wilcox.test(CA_Merged_Data %>%
               filter(Decarceratory. == 1) %>%
@@ -639,14 +707,69 @@ CA_Merged_Data %>%
 
 #is there a correlation between probation and prison
 
-cor.test(data = v , 
+cor.test(data = CA_Merged_Data , 
          ~ Percentage_Prison + Percentage_Probation)
 
 #graph above
+
 
 CA_Merged_Data %>%
   ggplot(aes(color = Decarceratory. , x = Prison , y = Probation)) + geom_point()
 
 ```
+
+
+Analyzing PA Data
+```{r}
+
+PA_Prison_Sentences_by_Decarceratory <- aov(data = PA_Merged_Data , Percentage_Prison ~ Decarceratory)
+
+summary(PA_Prison_Sentences_by_Decarceratory)
+
+
+TukeyHSD(PA_Prison_Sentences_by_Decarceratory)
+
+
+wilcox.test(PA_Merged_Data %>%
+              filter(Decarceratory == 1) %>%
+              select(Percentage_Prison) %>%
+              na.omit %>%
+              unlist, 
+            PA_Merged_Data %>%
+              filter(Decarceratory == 0) %>%
+              select(Percentage_Prison) %>%
+              na.omit %>%
+              unlist)
+
+#still comparing medians
+
+med1way(data = PA_Merged_Data ,
+        Percentage_Prison ~ Decarceratory)
+
+med2way(data = PA_Merged_Data ,
+        Percentage_Prison ~ Decarceratory + Election_Year)
+
+#boxplot
+
+PA_Merged_Data %>%
+  ggplot(aes(fill = Election_Year, x = Decarceratory , y = Percentage_Prison)) + geom_boxplot() + facet_wrap(~ Election_Year) 
+
+#is there a correlation between probation and prison
+
+cor.test(data = PA_Merged_Data , 
+         ~ Percentage_Prison + Percentage_Probation)
+
+#graph above
+
+PA_Merged_Data %>%
+  ggplot(aes(color = Decarceratory , x = State_Prison , y = Probation)) + geom_point()
+
+```
 ```
 
+VISUALIZATIONS
+
+```{r}
+
+
+```
