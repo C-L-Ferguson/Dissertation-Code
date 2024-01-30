@@ -155,39 +155,39 @@ CA_2006_2016 %>%
 #yes vs no counties without year consideration 
 
 wilcox.test(CA_2006_2016 %>%
-              filter(Approved.Prop. == "Y") %>%
+              filter(Approved_Prop == "Y") %>%
             select(rc_tot) %>%
               unlist , CA_2006_2016 %>%
-  filter(Approved.Prop. == "N") %>%
+  filter(Approved_Prop == "N") %>%
   select(rc_tot) %>%
   unlist)
 
 #yes v no counties comparing after 2010 prop
 
 wilcox.test(CA_2006_2016 %>%
-              filter(Approved.Prop. == "Y" , year > 2010 ) %>%
+              filter(Approved_Prop == "Y" , year > 2010 ) %>%
             select(rc_tot) %>%
               unlist , CA_2006_2016 %>%
-  filter(Approved.Prop. == "N", year > 2010 ) %>%
+  filter(Approved_Prop == "N", year > 2010 ) %>%
   select(rc_tot) %>%
   unlist)
 
 #there was a preexisting difference in arrest rates from those counties and then they voted yes or no, and then there wasn't a difference. 
 
 wilcox.test(CA_2006_2016 %>%
-              filter(Approved.Prop. == "Y" , year <= 2010 ) %>%
+              filter(Approved_Prop == "Y" , year <= 2010 ) %>%
             select(rc_tot) %>%
               unlist , CA_2006_2016 %>%
-  filter(Approved.Prop. == "N", year <= 2010 ) %>%
+  filter(Approved_Prop == "N", year <= 2010 ) %>%
   select(rc_tot) %>%
   unlist)
 
 #first is significant for year <= 2010, second is significant for approved.prop and third is significant for both together (how the yes, no question agumented whether before or after 2010). 
 
-med2way(data = CA_2006_2016 , rc_tot ~ factor(I(year <= 2010)) + factor(Approved.Prop.))
+med2way(data = CA_2006_2016 , rc_tot ~ factor(I(year <= 2010)) + factor(Approved_Prop))
 
 CA_2006_2016 %>%
-  group_by(year <= 2010 , Approved.Prop.) %>%
+  group_by(year <= 2010 , Approved_Prop) %>%
   summarize(rc_tot_med = median(rc_tot))
 
 #cor.test for correlations between numerics. Generally don't consider percent yes. 
@@ -206,7 +206,7 @@ CA_2006_2016 %>%
 CA_2006_2016 %>%
   pivot_longer(cols = c("w_rate", "b_rate" , "i_rate" , "a_rate"
   ) , names_to = "race" , values_to = "rate") %>%
-  group_by(race , year > 2010 , Approved.Prop.) %>%
+  group_by(race , year > 2010 , Approved_Prop) %>%
   summarize(rate_med = median(na.rm = T , rate))
 
 ```
@@ -284,6 +284,9 @@ wilcox.test(AZ_2006_2020 %>%
   select(rc_rate) %>%
   unlist)
 
+AZ_2006_2020 %>%
+  ggplot(aes(x = year, y = rc_rate, group = year)) + geom_boxplot()
+
 #first is significant for year <= 2016, second is significant for approved.prop and third is significant for both together (how the yes, no question augmented whether before or after 2016). 
 
 med2way(data = AZ_2006_2020 , rc_tot ~ factor(I(year <= 2016)) + factor(Approved_Prop))
@@ -326,7 +329,91 @@ Let's run some regressions. COLORADO
 colnames(CO_2000_2010)[25]<-"Approved_Prop" 
 colnames(CO_2000_2010)[29]<-"Percent_Yes"  
 
+# Create new data frames for each year
+CO_before_2006_yes_vote <- CO_2000_2010 %>%
+  filter(year <= 2006) %>%
+  filter(Approved_Prop == "Y") %>%
+  drop_na()
 
+
+CO_before_2006_no_vote <- CO_2000_2010 %>%
+  filter(year <= 2006) %>%
+  filter(Approved_Prop == "N") %>%
+  drop_na()
+
+
+CO_after_2006_yes_vote <- CO_2000_2010 %>%
+  filter(year > 2006) %>% 
+  filter(Approved_Prop == "Y") %>%
+  drop_na()
+ 
+
+CO_after_2006_no_vote <- CO_2000_2010 %>%
+  filter(year > 2006) %>%
+  filter(Approved_Prop == "N") %>%
+  drop_na()
+
+
+#paired t-test
+
+t.test(CO_before_2006_yes_vote$rc_rate, CO_after_2006_yes_vote$rc_rate, paired = F)
+t.test(CO_before_2006_no_vote$rc_rate , CO_after_2006_no_vote$rc_rate, paired = F)
+
+# Calculate and add new columns with averages
+
+# CO_averages_before_2006_yes <- colMeans(CO_before_2006_yes_vote[, 12:24])
+# 
+# CO_averages_before_2006_yes <- data.frame(CO_averages_before_2006_yes)
+# 
+# CO_averages_before_2006_yes <- t(CO_averages_before_2006_yes)
+# 
+# CO_averages_before_2006_yes <- data.frame(CO_averages_before_2006_yes)
+# 
+# CO_averages_before_2006_no <- colMeans(CO_before_2006_no_vote[, 12:24])
+# 
+# CO_averages_before_2006_no <- data.frame(CO_averages_before_2006_no)
+# 
+# CO_averages_before_2006_no <- t(CO_averages_before_2006_no)
+# 
+# CO_averages_before_2006_no <- data.frame(CO_averages_before_2006_no)
+# 
+# 
+# CO_averages_after_2006_yes <- colMeans(CO_after_2006_yes_vote[, 12:24])
+# 
+# CO_averages_after_2006_yes <- data.frame(CO_averages_after_2006_yes)
+# 
+# CO_averages_after_2006_yes <- t(CO_averages_after_2006_yes)
+# 
+# CO_averages_after_2006_yes <- data.frame(CO_averages_after_2006_yes)
+# 
+# 
+# CO_averages_after_2006_no <- colMeans(CO_after_2006_no_vote[, 12:24])
+# 
+# CO_averages_after_2006_no <- data.frame(CO_averages_after_2006_no)
+# 
+# CO_averages_after_2006_no <- t(CO_averages_after_2006_no)
+# 
+# CO_averages_after_2006_no <- data.frame(CO_averages_after_2006_no)
+# 
+# 
+# 
+# #now I can compare these numbers I think. P values of 1 seem a bit extreme here. I think I did something wrong
+# 
+# t.test(CO_averages_before_2006_yes , CO_averages_after_2006_yes , paired = T)
+# 
+# wilcox.test(CO_averages_before_2006_yes %>%
+#             select(rc_rate) %>%
+#               unlist , CO_averages_before_2006_no %>%
+#   select(rc_rate) %>%
+#   unlist)
+# 
+# wilcox.test(CO_averages_after_2006_yes %>%
+#             select(rc_rate) %>%
+#               unlist , CO_averages_after_2006_no %>%
+#   select(rc_rate) %>%
+#   unlist)
+# 
+# 
 
 CO_2000_2010 <-
   CO_2000_2010 %>%

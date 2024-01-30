@@ -38,9 +38,8 @@ library(mc2d)
 library(WRS2)
 options(PACKAGE_MAINFOLDER="C:/Users/...")
 install.packages("broom.mixed")
-library(broom.mixed)
-
-
+install.packages ("palmerpenguins")
+library(ggsignif)
 ```
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
@@ -106,10 +105,6 @@ California_DA_election_data<- read.csv(
 
 
 #Merge two dataframes and add percentages of sentences
-
-```{r}
-
-
 
 California_Merged_Data <- merge(California_County_Level_Sentences, California_DA_election_data, by="County_and_Quarter")
 
@@ -620,7 +615,24 @@ NY_Prison_Sentences_by_Decarceratory_aov <- aov(data = NY_Merged_Data , Percenta
 
 TurkeyHSD_NY_Prison_Sentences <- TukeyHSD(NY_Prison_Sentences_by_Decarceratory_aov)
 
+TurkeyHSD_NY_Prison_Sentences
+
 tidy_turkey(TurkeyHSD_NY_Prison_Sentences)
+
+#look at the means to see the difference
+
+
+summary(NY_Prison_Sentences_by_Decarceratory)
+
+#ggplot it
+
+ggplot(data = NY_Merged_Data , aes(Decarceratory, Percentage_Prison)) + 
+  geom_boxplot()
+
+NY_Merged_Data %>%
+drop_na(Decarceratory) %>%
+  ggplot(aes(Decarceratory, Percentage_Prison)) +
+  geom_boxplot()
 
 #wilcox test compares medians 
 
@@ -635,21 +647,53 @@ wilcox_test_decarceratory <- wilcox.test(NY_Merged_Data %>%
               na.omit %>%
               unlist)
 
-tidy(TurkeyHSD_NY_Prison_Sentences)
-tidy(wilcox_test_decarceratory)
 
-#still comparing medians
+#still comparing medians. p values on the two main effects and the chi-square is the interaction between the two. Chi-square is a test of independence. So if two things are when you reject the null hypothesis you are saying that you cannot reject the null hypothesis that they are independent. So we do not have evidence showing dependence. 
 
 med1way(data = NY_Merged_Data ,
         Percentage_Prison ~ Decarceratory)
 
-med2way(data = NY_Merged_Data ,
+med2way_Dec_Election_Year <- med2way(data = NY_Merged_Data ,
         Percentage_Prison ~ Decarceratory + Election_Year)
 
-#boxplot
+med2way_Dec_Election_Year
+summary(med2way_Dec_Election_Year)
+
+#mean comparison
+
+AOV_Mean_Dec_Election <- aov(data = NY_Merged_Data , Percentage_Prison ~ Decarceratory * Election_Year)
+
+summary(AOV_Mean_Dec_Election)
+
+anova(AOV_Mean_Dec_Election)
+#boxplot 
+#http://sthda.com/english/articles/24-ggpubr-publication-ready-plots/76-add-p-values-and-significance-levels-to-ggplots/
+
+#https://www.datanovia.com/en/lessons/kruskal-wallis-test-in-r/
+
+#work on fixing this plot to be easier to read 
+
+library(palmerpenguins)
+data(package = 'palmerpenguins')
+
 
 NY_Merged_Data %>%
-  ggplot(aes(fill = Election_Year, x = Decarceratory , y = Percentage_Prison)) + geom_boxplot() + facet_wrap(~ Election_Year) 
+  drop_na(Decarceratory) %>%
+  ggplot(aes(fill = Election_Year, x = Decarceratory , y = Percentage_Prison)) + geom_boxplot() + facet_wrap(~ Election_Year) +
+  geom_signif(comparisons = list(c("Percentage_Prison", "Election_Year")) , 
+    map_signif_level = TRUE,
+    textsize = 6,
+    step_increase = .1
+  ) +
+  labs(
+    x = "Decarceratory",
+    y = "Percentage of Guilty Verdicts Sentenced to Prison",
+    title = "Differences in Prison Sentencing Percentage by Election Year",
+    caption = "Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1"
+  ) +
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5))
+
 
 #is there a correlation between probation and prison
 
@@ -660,6 +704,36 @@ cor.test(data = NY_Merged_Data ,
 
 NY_Merged_Data %>%
   ggplot(aes(color = Party , x = Percentage_Prison , y = Percentage_Probation)) + geom_point()
+
+# create an independent and dependent variable
+
+Percentage_Prison <- NY_Merged_Data$Percentage_Prison
+Contested_Primary <- NY_Merged_Data$Contested_Primary
+Percentage_Jail <- NY_Merged_Data$Percentage_Jail
+Percentage_Probation <- NY_Merged_Data$Percentage_Probation
+Percentage_Fine <- NY_Merged_Data$Percentage_Fine
+
+NY_Merged_Data_Model_Jail <- 
+  lm(Percentage_Jail ~ Contested_Primary)
+
+
+NY_Merged_Data_Model_Probation <- 
+  lm(Percentage_Probation ~ Contested_Primary)
+
+
+NY_Merged_Data_Model_Fine <- 
+  lm(Percentage_Fine ~ Contested_Primary)
+
+
+NY_Merged_Data_Model_Prison <- 
+  lm(Percentage_Prison ~ Contested_Primary)
+
+summary(NY_Merged_Data_Model_Prison)
+summary(NY_Merged_Data_Model_Fine)
+summary(NY_Merged_Data_Model_Probation)
+summary(NY_Merged_Data_Model_Jail)
+
+
 
 ```
 
