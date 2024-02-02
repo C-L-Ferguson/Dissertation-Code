@@ -131,6 +131,67 @@ Let's run some regressions. CALIFORNIA
 ```{r}
 
 colnames(CA_2006_2016)[2]<-"year"  
+
+CA_before_2006_yes_vote <- CA_2006_2016 %>%
+  filter(year <= 2010 ) %>%
+  filter(Approved_Prop == "Y") %>%
+  drop_na()
+
+
+CA_before_2006_no_vote <- CA_2006_2016 %>%
+  filter(year <= 2010 ) %>%
+  filter(Approved_Prop == "N") %>%
+  drop_na()
+
+
+CA_after_2006_yes_vote <- CA_2006_2016 %>%
+  filter(year > 2010 ) %>% 
+  filter(Approved_Prop == "Y") %>%
+  drop_na()
+ 
+
+CA_after_2006_no_vote <- CA_2006_2016 %>%
+  filter(year > 2010 ) %>%
+  filter(Approved_Prop == "N") %>%
+  drop_na()
+
+#take 2009 and 2011, do paired t-test for yes and no. Then get the change in arrest rates from 09 to '11. Those changes are a pooled T-test. Check to see if variance is equal. this will lead to a treatment effects regression. doc on t.test function will give a lot. look at pooled and paired.
+
+CA_2009_yes_vote <- CA_2006_2016 %>%
+  filter(year == 2009 ) %>% 
+  filter(Approved_Prop == "Y") %>%
+  drop_na()
+ 
+
+CA_2011_yes_vote <- CA_2006_2016 %>%
+  filter(year == 2011 ) %>%
+  filter(Approved_Prop == "Y") %>%
+  drop_na()
+
+CA_2009_no_vote <- CA_2006_2016 %>%
+  filter(year == 2009 ) %>% 
+  filter(Approved_Prop == "N") %>%
+  drop_na()
+ 
+
+CA_2011_no_vote <- CA_2006_2016 %>%
+  filter(year == 2011 ) %>%
+  filter(Approved_Prop == "N") %>%
+  drop_na()
+
+anti_join(CA_2009_yes_vote, CA_2011_yes_vote, by="County")
+anti_join(CA_2009_no_vote, CA_2011_no_vote, by="County")
+
+CA_2009_yes_vote <- CA_2009_yes_vote[-c(1), ]
+
+t.test(CA_2009_yes_vote$rc_rate, CA_2011_yes_vote$rc_rate, paired = T)
+t.test(CA_2009_no_vote$rc_rate, CA_2011_no_vote$rc_rate, paired = T)
+
+
+t.test(CA_2009_yes_vote$rc_rate, CA_2011_yes_vote$rc_rate, var.equal = T)
+t.test(CA_2009_no_vote$rc_rate, CA_2011_no_vote$rc_rate, var.equal = T)
+
+
 #California
 
 CA_2006_2016 <-
@@ -218,6 +279,62 @@ colnames(AZ_2006_2020)[25]<-"Approved_Prop"
 colnames(AZ_2006_2020)[29]<-"Percent_Yes"  
 
 
+AZ_before_2006_yes_vote <- AZ_2006_2020 %>%
+  filter(year <= 2016 ) %>%
+  filter(Approved_Prop == "Yes") %>%
+  drop_na()
+
+
+AZ_before_2006_no_vote <- AZ_2006_2020 %>%
+  filter(year <= 2016 ) %>%
+  filter(Approved_Prop == "No") %>%
+  drop_na()
+
+
+AZ_after_2006_yes_vote <- AZ_2006_2020 %>%
+  filter(year > 2016 ) %>% 
+  filter(Approved_Prop == "Yes") %>%
+  drop_na()
+ 
+
+AZ_after_2006_no_vote <- AZ_2006_2020 %>%
+  filter(year > 2016 ) %>%
+  filter(Approved_Prop == "No") %>%
+  drop_na()
+
+t.test(AZ_before_2006_yes_vote$rc_rate, AZ_after_2006_yes_vote$rc_rate, paired = F)
+t.test(AZ_before_2006_no_vote$rc_rate , AZ_after_2006_no_vote$rc_rate, paired = F)
+
+#take 2015 and 2017, do paired t-test for yes and no. Then get the change in arrest rates from '15 to '17. Those changes are a pooled T-test. Check to see if variance is equal. this will lead to a treatment effects regression. doc on t.test function will give a lot. look at pooled and paired.
+
+AZ_2015_yes_vote <- AZ_2006_2020 %>%
+  filter(year == 2015) %>%
+  filter(Approved_Prop == "Yes") 
+
+AZ_2017_yes_vote <- AZ_2006_2020 %>%
+  filter(year == 2017 ) %>%
+  filter(Approved_Prop == "Yes")
+
+AZ_2015_no_vote <- AZ_2006_2020 %>%
+  filter(year == 2015 ) %>% 
+  filter(Approved_Prop == "No")
+
+AZ_2017_no_vote <- AZ_2006_2020 %>%
+  filter(year == 2017 ) %>%
+  filter(Approved_Prop == "No") 
+
+
+anti_join(AZ_2015_yes_vote, AZ_2017_yes_vote, by="ctnm")
+anti_join(AZ_2017_no_vote, AZ_2015_no_vote, by = "ctnm")
+
+AZ_2017_no_vote <- AZ_2017_no_vote[-c(5), ]
+
+t.test(AZ_2015_yes_vote$rc_rate, AZ_2017_yes_vote$rc_rate, paired = T)
+t.test(AZ_2015_no_vote$rc_rate, AZ_2017_no_vote$rc_rate, paired = T)
+
+
+t.test(AZ_2015_yes_vote$rc_rate, AZ_2017_yes_vote$rc_rate, var.equal = T)
+t.test(AZ_2015_no_vote$rc_rate, AZ_2017_no_vote$rc_rate, var.equal = T)
 
 AZ_2006_2020 <-
   AZ_2006_2020 %>%
@@ -359,60 +476,39 @@ CO_after_2006_no_vote <- CO_2000_2010 %>%
 t.test(CO_before_2006_yes_vote$rc_rate, CO_after_2006_yes_vote$rc_rate, paired = F)
 t.test(CO_before_2006_no_vote$rc_rate , CO_after_2006_no_vote$rc_rate, paired = F)
 
-# Calculate and add new columns with averages
+#take 2005 and 2007, do paired t-test for yes and no. Then get the change in arrest rates from '05 to '07. Those changes are a pooled T-test. Check to see if variance is equal. this will lead to a treatment effects regression. doc on t.test function will give a lot. look at pooled and paired.
 
-# CO_averages_before_2006_yes <- colMeans(CO_before_2006_yes_vote[, 12:24])
-# 
-# CO_averages_before_2006_yes <- data.frame(CO_averages_before_2006_yes)
-# 
-# CO_averages_before_2006_yes <- t(CO_averages_before_2006_yes)
-# 
-# CO_averages_before_2006_yes <- data.frame(CO_averages_before_2006_yes)
-# 
-# CO_averages_before_2006_no <- colMeans(CO_before_2006_no_vote[, 12:24])
-# 
-# CO_averages_before_2006_no <- data.frame(CO_averages_before_2006_no)
-# 
-# CO_averages_before_2006_no <- t(CO_averages_before_2006_no)
-# 
-# CO_averages_before_2006_no <- data.frame(CO_averages_before_2006_no)
-# 
-# 
-# CO_averages_after_2006_yes <- colMeans(CO_after_2006_yes_vote[, 12:24])
-# 
-# CO_averages_after_2006_yes <- data.frame(CO_averages_after_2006_yes)
-# 
-# CO_averages_after_2006_yes <- t(CO_averages_after_2006_yes)
-# 
-# CO_averages_after_2006_yes <- data.frame(CO_averages_after_2006_yes)
-# 
-# 
-# CO_averages_after_2006_no <- colMeans(CO_after_2006_no_vote[, 12:24])
-# 
-# CO_averages_after_2006_no <- data.frame(CO_averages_after_2006_no)
-# 
-# CO_averages_after_2006_no <- t(CO_averages_after_2006_no)
-# 
-# CO_averages_after_2006_no <- data.frame(CO_averages_after_2006_no)
-# 
-# 
-# 
-# #now I can compare these numbers I think. P values of 1 seem a bit extreme here. I think I did something wrong
-# 
-# t.test(CO_averages_before_2006_yes , CO_averages_after_2006_yes , paired = T)
-# 
-# wilcox.test(CO_averages_before_2006_yes %>%
-#             select(rc_rate) %>%
-#               unlist , CO_averages_before_2006_no %>%
-#   select(rc_rate) %>%
-#   unlist)
-# 
-# wilcox.test(CO_averages_after_2006_yes %>%
-#             select(rc_rate) %>%
-#               unlist , CO_averages_after_2006_no %>%
-#   select(rc_rate) %>%
-#   unlist)
-# 
+CO_2005_yes_vote <- CO_2000_2010 %>%
+  filter(year == 2005) %>%
+  filter(Approved_Prop == "Y") 
+
+CO_2007_yes_vote <- CO_2000_2010 %>%
+  filter(year == 2007 ) %>%
+  filter(Approved_Prop == "Y")
+
+CO_2005_no_vote <- CO_2000_2010 %>%
+  filter(year == 2005 ) %>% 
+  filter(Approved_Prop == "N")
+
+CO_2007_no_vote <- CO_2000_2010 %>%
+  filter(year == 2007 ) %>%
+  filter(Approved_Prop == "N") 
+
+nrow(CO_2005_no_vote)
+nrow(CO_2007_no_vote)
+
+anti_join(CO_2005_yes_vote, CO_2007_yes_vote, by="County")
+anti_join(CO_2007_no_vote, CO_2005_no_vote, by = "County")
+
+CO_2005_no_vote <- CO_2005_no_vote[-c(5, 9, 10, 12, 25, 35, 40), ]
+CO_2007_no_vote <- CO_2007_no_vote[-c(23), ]
+
+t.test(CO_2005_yes_vote$rc_rate, CO_2007_yes_vote$rc_rate, paired = T)
+t.test(CO_2005_no_vote$rc_rate, CO_2007_no_vote$rc_rate, paired = T)
+
+
+t.test(CO_2005_yes_vote$rc_rate, CO_2007_yes_vote$rc_rate, var.equal = T)
+t.test(CO_2005_no_vote$rc_rate, CO_2007_no_vote$rc_rate, var.equal = T)
 # 
 
 CO_2000_2010 <-
@@ -541,7 +637,68 @@ colnames(ND_2012_2020)[25]<-"Approved_Prop"
 colnames(ND_2012_2020)[29]<-"Percent_Yes"  
 colnames(ND_2012_2020)[2]<-"year"  
 
+ND_before_2006_yes_vote <- ND_2012_2020 %>%
+  filter(year <= 2018) %>%
+  filter(Approved_Prop == "Y") %>%
+  drop_na()
 
+
+ND_before_2006_no_vote <- ND_2012_2020 %>%
+  filter(year <= 2018) %>%
+  filter(Approved_Prop == "N") %>%
+  drop_na()
+
+
+ND_after_2006_yes_vote <- ND_2012_2020 %>%
+  filter(year > 2018) %>% 
+  filter(Approved_Prop == "Y") %>%
+  drop_na()
+ 
+
+ND_after_2006_no_vote <- ND_2012_2020 %>%
+  filter(year > 2018) %>%
+  filter(Approved_Prop == "N") %>%
+  drop_na()
+
+t.test(ND_before_2006_yes_vote$rc_rate, ND_after_2006_yes_vote$rc_rate, paired = F)
+t.test(ND_before_2006_no_vote$rc_rate , ND_after_2006_no_vote$rc_rate, paired = F)
+
+
+#take 2017 and 2019, do paired t-test for yes and no. Then get the change in arrest rates from '17 to '19. Those changes are a pooled T-test. Check to see if variance is equal. this will lead to a treatment effects regression. doc on t.test function will give a lot. look at pooled and paired.
+
+ND_2017_yes_vote <- ND_2012_2020 %>%
+  filter(year == 2017) %>%
+  filter(Approved_Prop == "Y") 
+
+ND_2019_yes_vote <- ND_2012_2020 %>%
+  filter(year == 2019 ) %>%
+  filter(Approved_Prop == "Y")
+
+ND_2017_no_vote <- ND_2012_2020 %>%
+  filter(year == 2017 ) %>% 
+  filter(Approved_Prop == "N")
+
+ND_2019_no_vote <- ND_2012_2020 %>%
+  filter(year == 2019 ) %>%
+  filter(Approved_Prop == "N") 
+
+nrow(ND_2017_no_vote)
+nrow(ND_2019_no_vote)
+
+anti_join(ND_2017_yes_vote, ND_2019_yes_vote, by="County")
+anti_join(CO_2007_no_vote, CO_2005_no_vote, by = "County")
+
+ND_2017_yes_vote <- ND_2017_yes_vote[-c(1, 3), ]
+CO_2007_no_vote <- CO_2007_no_vote[-c(23), ]
+
+t.test(ND_2017_yes_vote$rc_rate, ND_2019_yes_vote$rc_rate, paired = T)
+t.test(ND_2017_no_vote$rc_rate, ND_2019_no_vote$rc_rate, paired = T)
+
+
+t.test(ND_2017_yes_vote$rc_rate, ND_2019_yes_vote$rc_rate, var.equal = T)
+t.test(ND_2017_no_vote$rc_rate, ND_2019_no_vote$rc_rate, var.equal = T)
+
+###
 ND_2012_2020 <-
   ND_2012_2020 %>%
   mutate(rc_tot = rc_tot %>% 
