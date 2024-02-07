@@ -619,10 +619,12 @@ summary(NY_Prison_Sentences_by_Decarceratory)
 ggplot(data = NY_Merged_Data , aes(Decarceratory, Percentage_Prison)) + 
   geom_boxplot()
 
-NY_Merged_Data %>%
+NY_Box_Plot1 <- NY_Merged_Data %>%
 drop_na(Decarceratory) %>%
   ggplot(aes(Decarceratory, Percentage_Prison)) +
   geom_boxplot()
+
+ggsave(NY_Box_Plot1 , file = "C:/Users/carol/Desktop/Dissertation Code/Dissertation-Code/Images/NYboxplot1.png")
 
 #wilcox test compares medians 
 
@@ -667,7 +669,7 @@ library(palmerpenguins)
 data(package = 'palmerpenguins')
 
 
-NY_Merged_Data %>%
+NY_Box_Plot_2 <- NY_Merged_Data %>%
   drop_na(Decarceratory) %>%
   ggplot(aes(x = Decarceratory , y = Percentage_Prison)) + 
   geom_boxplot(aes(fill = Election_Year)) + 
@@ -685,10 +687,12 @@ NY_Merged_Data %>%
     caption = "Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1"
   ) +
   theme_bw() +
-  theme(plot.title = element_text(hjust = 0.5))
+  theme(plot.title = element_text(hjust = 0.5)) 
+
+ggsave(NY_Box_Plot_2, file = "C:/Users/carol/Desktop/Dissertation Code/Dissertation-Code/Images/NYboxplot2.png")
 
 
-s#is there a correlation between probation and prison
+#is there a correlation between probation and prison
 
 cor.test(data = NY_Merged_Data , 
          ~ Percentage_Prison + Percentage_Probation)
@@ -828,13 +832,5 @@ cor.test(data = PA_Merged_Data ,
 
 PA_Merged_Data %>%
   ggplot(aes(color = Decarceratory , x = State_Prison , y = Probation)) + geom_point()
-
-```
-```
-
-VISUALIZATIONS
-
-```{r}
-
 
 ```
