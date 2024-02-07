@@ -184,13 +184,12 @@ anti_join(CA_2009_no_vote, CA_2011_no_vote, by="County")
 
 CA_2009_yes_vote <- CA_2009_yes_vote[-c(1), ]
 
-t.test(CA_2009_yes_vote$rc_rate, CA_2011_yes_vote$rc_rate, paired = T)
-t.test(CA_2009_no_vote$rc_rate, CA_2011_no_vote$rc_rate, paired = T)
+CA_yes_vote_paired_t <- t.test(CA_2009_yes_vote$rc_rate, CA_2011_yes_vote$rc_rate, paired = T)
+CA_no_vote_paired_t <- t.test(CA_2009_no_vote$rc_rate, CA_2011_no_vote$rc_rate, paired = T)
 
 
-t.test(CA_2009_yes_vote$rc_rate, CA_2011_yes_vote$rc_rate, var.equal = T)
-t.test(CA_2009_no_vote$rc_rate, CA_2011_no_vote$rc_rate, var.equal = T)
-
+CA_yes_vote_pooled_t <- t.test(CA_2009_yes_vote$rc_rate, CA_2011_yes_vote$rc_rate, var.equal = T)
+CA_no_vote_pooled_t  <- t.test(CA_2009_no_vote$rc_rate, CA_2011_no_vote$rc_rate, var.equal = T)
 
 #California
 
