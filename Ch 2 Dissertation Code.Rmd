@@ -6,6 +6,8 @@ output: html_notebook
 
 Inputting Functions 
 ```{r}
+library(gt)
+library(rstatix)
 library(ggplot2)
 library(tidyverse)
 library(dplyr)
@@ -683,7 +685,7 @@ NY_Box_Plot_2 <- NY_Merged_Data %>%
   labs(
     x = "Decarceratory",
     y = "Percentage of Guilty Verdicts Sentenced to Prison",
-    title = "Differences in Prison Sentencing Percentage by Election Year",
+    title = "New York Differences in Prison Sentencing Percentage by Election Year",
     caption = "Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1"
   ) +
   theme_bw() +
@@ -699,25 +701,38 @@ cor.test(data = NY_Merged_Data ,
 
 #graph above
 
-NY_Merged_Data %>%
+NY_Point_Plot1 <- 
+  NY_Merged_Data %>%
   ggplot(aes(color = Party , x = Percentage_Prison , y = Percentage_Probation)) + geom_point()
+
+ggsave(NY_Point_Plot1, file = "C:/Users/carol/Desktop/Dissertation Code/Dissertation-Code/Images/NY_Point_Plot1.png")
+
 
 # create an independent and dependent variable. Think about if you want to do a regression (y-intercept) or Anova
 
 NY_Merged_Data_Model_Jail <-  
   lm(Percentage_Jail ~ Contested_Primary, data = NY_Merged_Data) 
 
+stargazer(NY_Merged_Data_Model_Jail,  title = "Percentage Jail by Contested Primary") %>%
+  write_lines("NY_Data_Model_Jail.txt")
 
 NY_Merged_Data_Model_Probation <- 
   lm(Percentage_Probation ~ Contested_Primary, data = NY_Merged_Data)
 
+stargazer(NY_Merged_Data_Model_Probation,  title = "Probation by Contested Primary") %>%
+  write_lines("NY_Data_Model_Probation.txt")
 
 NY_Merged_Data_Model_Fine <- 
   lm(Percentage_Fine ~ Contested_Primary, data = NY_Merged_Data)
 
+stargazer(NY_Merged_Data_Model_Fine,  title = "Fine by Contested Primary") %>%
+  write_lines("NY_Data_Model_Fine.txt")
 
 NY_Merged_Data_Model_Prison <- 
   lm(Percentage_Prison ~ Contested_Primary, data = NY_Merged_Data)
+
+stargazer(NY_Merged_Data_Model_Prison,  title = "Prison by Contested Primary") %>%
+  write_lines("NY_Data_Model_Prison.txt")
 
 #slope = estimate of contested_primary
 
@@ -741,9 +756,10 @@ CA_Merged_Data <- CA_Merged_Data %>%
          Election.Year. = Election.Year. %>%
            as.factor) 
 
-CA_Prison_Sentences_by_Decarceratory <- aov(data = CA_Merged_Data , Percentage_Prison ~ Decarceratory.)
+CA_Prison_Sentences_by_Decarceratory <- lm(data = CA_Merged_Data , Percentage_Prison ~ Decarceratory.)
 
-summary(CA_Prison_Sentences_by_Decarceratory)
+stargazer(CA_Prison_Sentences_by_Decarceratory,  title = "California Prison by Decarceratory") %>%
+  write_lines("CA_Prison_Sentences_by_Decarceratory.txt")
 
 
 TukeyHSD(CA_Prison_Sentences_by_Decarceratory)
@@ -771,19 +787,65 @@ med2way(data = CA_Merged_Data ,
 
 #boxplot
 
-CA_Merged_Data %>%
+CA_Percentage_Prison_by_Decarceratory_BoxPlot <- CA_Merged_Data %>%
   ggplot(aes(fill = Election.Year., x = Decarceratory. , y = Percentage_Prison)) + geom_boxplot() + facet_wrap(~ Election.Year.) 
 
+ggsave(CA_Percentage_Prison_by_Decarceratory_BoxPlot, file = "C:/Users/carol/Desktop/Dissertation Code/Dissertation-Code/Images/CA_Box_Plot1.png")
+
+CA_Box_Plot_2 <- CA_Merged_Data %>%
+  drop_na(Decarceratory.) %>%
+  ggplot(aes(x = Decarceratory. , y = Percentage_Prison)) + 
+  geom_boxplot(aes(fill = Election_Year)) + 
+  facet_wrap(~ Election_Year) +
+  geom_signif(comparisons = list(c("0" , "1")) , 
+    map_signif_level = TRUE,
+    textsize = 6,
+    step_increase = .1
+  ) +
+  ylim(NA , 80) +
+  labs(
+    x = "Decarceratory",
+    y = "Percentage of Guilty Verdicts Sentenced to Prison",
+    title = "California Differences in Prison Sentencing Percentage by Election Year",
+    caption = "Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1"
+  ) +
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5)) 
+
+ggsave(NY_Box_Plot_2, file = "C:/Users/carol/Desktop/Dissertation Code/Dissertation-Code/Images/CAboxplot2.png")
 #is there a correlation between probation and prison
 
-cor.test(data = CA_Merged_Data , 
+Cor_test_CA_prison_to_probation <- cor.test(data = CA_Merged_Data , 
          ~ Percentage_Prison + Percentage_Probation)
 
+stargazer(Cor_test_CA_prison_to_probation,  title = "California Prison to Probation") %>%
+  write_lines("Cor_test_CA_prison_to_probation.txt")
 #graph above
 
 
-CA_Merged_Data %>%
+CA_Prison_to_Probation_BoxPlot <- CA_Merged_Data %>%
   ggplot(aes(color = Decarceratory. , x = Prison , y = Probation)) + geom_point()
+
+ggsave(CA_Prison_to_Probation_BoxPlot, file = "C:/Users/carol/Desktop/Dissertation Code/Dissertation-Code/Images/CA_Box_Plot3.png")
+
+#combining tables. Recall there is no partisan primary in CA. NEED HELP WITH THIS ONE. 
+
+CA_Merged_Data_Model_Prison <-  
+  t_test(Percentage_Prison ~ Contested., data = CA_Merged_Data, paired = FALSE) %>%
+  add_significance() %>%
+  gt()
+
+CA_Merged_Data_Model_Probation <- 
+  t_test(Percentage_Probation ~ Contested., data = CA_Merged_Data, paired = FALSE) %>%
+  add_significance() %>%
+  gt()
+
+combined_t <- 
+  tab_row_group(data = CA_Merged_Data_Model_Prison, label = "Group 1", rows = 1) %>%
+  tab_row_group(data = CA_Merged_Data_Model_Probation, label = "Group 2", rows = 2)
+
+
+
 
 ```
 

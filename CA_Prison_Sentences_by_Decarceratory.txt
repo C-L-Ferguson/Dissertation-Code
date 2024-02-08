@@ -1,0 +1,30 @@
+
+% Table created by stargazer v.5.2.3 by Marek Hlavac, Social Policy Institute. E-mail: marek.hlavac at gmail.com
+% Date and time: Thu, Feb 08, 2024 - 12:27:40 PM
+\begin{table}[!htbp] \centering 
+  \caption{California Prison by Decarceratory} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & \multicolumn{1}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-2} 
+\\[-1.8ex] & Percentage\_Prison \\ 
+\hline \\[-1.8ex] 
+ Decarceratory. & $-$0.125 \\ 
+  & (0.970) \\ 
+  & \\ 
+ Constant & 29.835$^{***}$ \\ 
+  & (0.356) \\ 
+  & \\ 
+\hline \\[-1.8ex] 
+Observations & 1,971 \\ 
+R$^{2}$ & 0.00001 \\ 
+Adjusted R$^{2}$ & $-$0.0005 \\ 
+Residual Std. Error & 14.720 (df = 1969) \\ 
+F Statistic & 0.017 (df = 1; 1969) \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Note:}  & \multicolumn{1}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\end{tabular} 
+\end{table} 
