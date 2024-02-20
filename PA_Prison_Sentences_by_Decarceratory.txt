@@ -1,8 +1,8 @@
 
 % Table created by stargazer v.5.2.3 by Marek Hlavac, Social Policy Institute. E-mail: marek.hlavac at gmail.com
-% Date and time: Fri, Feb 16, 2024 - 12:01:20 PM
+% Date and time: Mon, Feb 12, 2024 - 12:29:18 PM
 \begin{table}[!htbp] \centering 
-  \caption{California Prison by Decarceratory} 
+  \caption{Pennsylvania Prison by Decarceratory} 
   \label{} 
 \begin{tabular}{@{\extracolsep{5pt}}lc} 
 \\[-1.8ex]\hline 
@@ -11,18 +11,18 @@
 \cline{2-2} 
 \\[-1.8ex] & Percentage\_Prison \\ 
 \hline \\[-1.8ex] 
- Decarceratory.1 & $-$0.125 \\ 
-  & (0.970) \\ 
+ Decarceratory & 1.061 \\ 
+  & (0.714) \\ 
   & \\ 
- Constant & 29.835$^{***}$ \\ 
-  & (0.356) \\ 
+ Constant & 16.704$^{***}$ \\ 
+  & (0.233) \\ 
   & \\ 
 \hline \\[-1.8ex] 
-Observations & 1,971 \\ 
-R$^{2}$ & 0.00001 \\ 
-Adjusted R$^{2}$ & $-$0.0005 \\ 
-Residual Std. Error & 14.720 (df = 1969) \\ 
-F Statistic & 0.017 (df = 1; 1969) \\ 
+Observations & 1,879 \\ 
+R$^{2}$ & 0.001 \\ 
+Adjusted R$^{2}$ & 0.001 \\ 
+Residual Std. Error & 9.544 (df = 1877) \\ 
+F Statistic & 2.208 (df = 1; 1877) \\ 
 \hline 
 \hline \\[-1.8ex] 
 \textit{Note:}  & \multicolumn{1}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 

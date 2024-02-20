@@ -745,6 +745,29 @@ summary(NY_Merged_Data_Model_Jail)
 
 
 
+#combining tables. Recall there is no partisan primary in CA. NEED HELP WITH THIS ONE. 
+
+NY_Merged_Data_Model_Prison <-  
+  t_test(Percentage_Prison ~ Contested_Primary, data = NY_Merged_Data, paired = FALSE) %>%
+  add_significance() 
+
+NY_Merged_Data_Model_Probation <- 
+  t_test(Percentage_Probation ~ Contested_Primary, data = NY_Merged_Data, paired = FALSE) %>%
+  add_significance() 
+
+NY_Merged_Data_Probation_combined_t <- 
+  rbind(NY_Merged_Data_Model_Prison, NY_Merged_Data_Model_Probation) %>%
+  gt() %>%
+  tab_row_group(label = "Group 1", rows = 1) %>%
+  tab_row_group(label = "Group 2", rows = 2)
+
+NY_Merged_Data_Probation_combined_t %>%
+  as_latex() %>%
+  as.character() %>% 
+  write_lines("NY_Merged_Data_Probation_Combined_T.txt")
+
+
+
 ```
 
 Analyzing CA Data
@@ -792,17 +815,17 @@ CA_Percentage_Prison_by_Decarceratory_BoxPlot <- CA_Merged_Data %>%
 
 ggsave(CA_Percentage_Prison_by_Decarceratory_BoxPlot, file = "C:/Users/carol/Desktop/Dissertation Code/Dissertation-Code/Images/CA_Box_Plot1.png")
 
-CA_Box_Plot_2 <- CA_Merged_Data %>%
+CA_Box_Plot_2_CH2 <- CA_Merged_Data %>%
   drop_na(Decarceratory.) %>%
   ggplot(aes(x = Decarceratory. , y = Percentage_Prison)) + 
-  geom_boxplot(aes(fill = Election_Year)) + 
-  facet_wrap(~ Election_Year) +
+  geom_boxplot(aes(fill = Election.Year.)) + 
+  facet_wrap(~ Election.Year.) +
   geom_signif(comparisons = list(c("0" , "1")) , 
     map_signif_level = TRUE,
     textsize = 6,
     step_increase = .1
   ) +
-  ylim(NA , 80) +
+  ylim(NA , 120) +
   labs(
     x = "Decarceratory",
     y = "Percentage of Guilty Verdicts Sentenced to Prison",
@@ -812,7 +835,7 @@ CA_Box_Plot_2 <- CA_Merged_Data %>%
   theme_bw() +
   theme(plot.title = element_text(hjust = 0.5)) 
 
-ggsave(NY_Box_Plot_2, file = "C:/Users/carol/Desktop/Dissertation Code/Dissertation-Code/Images/CAboxplot2.png")
+ggsave(CA_Box_Plot_2, file = "C:/Users/carol/Desktop/Dissertation Code/Dissertation-Code/Images/CAboxplot2Ch2.png")
 #is there a correlation between probation and prison
 
 Cor_test_CA_prison_to_probation <- cor.test(data = CA_Merged_Data , 
@@ -824,7 +847,7 @@ stargazer(Cor_test_CA_prison_to_probation,  title = "California Prison to Probat
 
 
 CA_Prison_to_Probation_BoxPlot <- CA_Merged_Data %>%
-  ggplot(aes(color = Decarceratory. , x = Prison , y = Probation)) + geom_point()
+  ggplot(aes(color = Decarceratory. , x = Percentage_Prison , y = Percentage_Probation)) + geom_point()
 
 ggsave(CA_Prison_to_Probation_BoxPlot, file = "C:/Users/carol/Desktop/Dissertation Code/Dissertation-Code/Images/CA_Box_Plot3.png")
 
@@ -832,26 +855,32 @@ ggsave(CA_Prison_to_Probation_BoxPlot, file = "C:/Users/carol/Desktop/Dissertati
 
 CA_Merged_Data_Model_Prison <-  
   t_test(Percentage_Prison ~ Contested., data = CA_Merged_Data, paired = FALSE) %>%
-  add_significance() %>%
-  gt()
+  add_significance() 
 
 CA_Merged_Data_Model_Probation <- 
   t_test(Percentage_Probation ~ Contested., data = CA_Merged_Data, paired = FALSE) %>%
-  add_significance() %>%
-  gt()
+  add_significance() 
 
-combined_t <- 
-  tab_row_group(data = CA_Merged_Data_Model_Prison, label = "Group 1", rows = 1) %>%
-  tab_row_group(data = CA_Merged_Data_Model_Probation, label = "Group 2", rows = 2)
+CA_Merged_Data_Probation_combined_t <- 
+  rbind(CA_Merged_Data_Model_Prison, CA_Merged_Data_Model_Probation) %>%
+  gt() %>%
+  tab_row_group(label = "Group 1", rows = 1) %>%
+  tab_row_group(label = "Group 2", rows = 2)
 
-
-
+CA_Merged_Data_Probation_combined_t %>%
+  as_latex() %>%
+  as.character() %>% 
+  write_lines("CA_Merged_Data_Probation_Combined_T.txt")
 
 ```
 
-
 Analyzing PA Data
 ```{r}
+PA_Merged_Data <- PA_Merged_Data %>%
+  mutate(Decarceratory = Decarceratory %>%
+           as.factor()) %>%
+  mutate(Election_Year = Election_Year %>%
+           as.factor())
 
 PA_Prison_Sentences_by_Decarceratory <- aov(data = PA_Merged_Data , Percentage_Prison ~ Decarceratory)
 
@@ -860,6 +889,10 @@ summary(PA_Prison_Sentences_by_Decarceratory)
 
 TukeyHSD(PA_Prison_Sentences_by_Decarceratory)
 
+PA_Prison_Sentences_by_Decarceratory <- lm(data = PA_Merged_Data , Percentage_Prison ~ Decarceratory)
+
+stargazer(PA_Prison_Sentences_by_Decarceratory,  title = "Pennsylvania Prison by Decarceratory") %>%
+  write_lines("PA_Prison_Sentences_by_Decarceratory.txt")
 
 wilcox.test(PA_Merged_Data %>%
               filter(Decarceratory == 1) %>%
@@ -882,17 +915,74 @@ med2way(data = PA_Merged_Data ,
 
 #boxplot
 
+PA_Percentage_Prison_by_Decarceratory_BoxPlot <- PA_Merged_Data %>%
+  ggplot(aes(fill = Election_Year, x = Decarceratory, y = Percentage_Prison)) + geom_boxplot() + facet_wrap(~ Election_Year) 
+
+ggsave(PA_Percentage_Prison_by_Decarceratory_BoxPlot, file = "C:/Users/carol/Desktop/Dissertation Code/Dissertation-Code/Images/PA_Box_Plot1.png")
+
+#for Jonathan. This is showing up blank.It's because decarceratory is continuous here for some reason.  
+
+PA_Box_Plot_2 <- PA_Merged_Data %>%
+  drop_na(Decarceratory) %>%
+  ggplot(aes(x = Decarceratory , y = Percentage_Prison)) + 
+  geom_boxplot(aes(fill = Election_Year)) + 
+  facet_wrap(~ Election_Year) +
+  geom_signif(comparisons = list(c("0" , "1")) , 
+    map_signif_level = TRUE,
+    textsize = 6,
+    step_increase = .1
+  ) +
+  ylim(NA , 80) +
+  labs(
+    x = "Decarceratory",
+    y = "Percentage of Guilty Verdicts Sentenced to Prison",
+    title = "Pennsylvania Differences in Prison Sentencing Percentage by Election Year",
+    caption = "Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1"
+  ) +
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5))  
+
+ggsave(PA_Box_Plot_2, file = "C:/Users/carol/Desktop/Dissertation Code/Dissertation-Code/Images/PAboxplot2.png")
+
+
 PA_Merged_Data %>%
   ggplot(aes(fill = Election_Year, x = Decarceratory , y = Percentage_Prison)) + geom_boxplot() + facet_wrap(~ Election_Year) 
 
 #is there a correlation between probation and prison
 
-cor.test(data = PA_Merged_Data , 
+Cor_test_PA_prison_to_probation <- cor.test(data = PA_Merged_Data , 
          ~ Percentage_Prison + Percentage_Probation)
+
+stargazer(Cor_test_PA_prison_to_probation,  title = "Pennsylvania Prison to Probation") %>%
+  write_lines("Cor_test_PA_prison_to_probation.txt")
 
 #graph above
 
-PA_Merged_Data %>%
-  ggplot(aes(color = Decarceratory , x = State_Prison , y = Probation)) + geom_point()
+PA_Prison_to_Probation_BoxPlot <- PA_Merged_Data %>%
+  ggplot(aes(color = Decarceratory , x = Percentage_Prison , y = Percentage_Probation)) + geom_point() +
+  scale_fill_discrete(guide = guide_legend(continuous = FALSE, label.continuous = F))
+
+ggsave(PA_Prison_to_Probation_BoxPlot, file = "C:/Users/carol/Desktop/Dissertation Code/Dissertation-Code/Images/PA_Box_Plot3.png")
+
+#combining tables. Recall there is no partisan primary in CA. NEED HELP WITH THIS ONE. 
+
+PA_Merged_Data_Model_Prison <-  
+  t_test(Percentage_Prison ~ Contested.Primary., data = PA_Merged_Data, paired = FALSE) %>%
+  add_significance() 
+
+PA_Merged_Data_Model_Probation <- 
+  t_test(Percentage_Probation ~ Contested.Primary., data = PA_Merged_Data, paired = FALSE) %>%
+  add_significance() 
+
+PA_Merged_Data_Probation_combined_t <- 
+  rbind(PA_Merged_Data_Model_Prison, PA_Merged_Data_Model_Probation) %>%
+  gt() %>%
+  tab_row_group(label = "Group 1", rows = 1) %>%
+  tab_row_group(label = "Group 2", rows = 2)
+
+PA_Merged_Data_Probation_combined_t %>%
+  as_latex() %>%
+  as.character() %>% 
+  write_lines("PA_Merged_Data_Probation_Combined_T.txt")
 
 ```

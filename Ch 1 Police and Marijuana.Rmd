@@ -185,15 +185,24 @@ anti_join(CA_2009_no_vote, CA_2011_no_vote, by="County")
 
 CA_2009_yes_vote <- CA_2009_yes_vote[-c(1), ]
 
-CA_yes_vote_paired_t <- t.test(CA_2009_yes_vote$rc_rate, CA_2011_yes_vote$rc_rate, paired = T)
+CA_yes_vote_paired_t <- t.test(CA_2009_yes_vote$rc_rate, CA_2011_yes_vote$rc_rate, paired = T) %>%
+  add_significance()
+
 CA_no_vote_paired_t <- t.test(CA_2009_no_vote$rc_rate, CA_2011_no_vote$rc_rate, paired = T)
 
-CA_yes_vote_paired_t
+
+CA_yes_and_no_vote_paired_t <- 
+  rbind(CA_yes_vote_paired_t, CA_no_vote_paired_t) %>%
+  gt() %>%
+  tab_row_group(label = "Group 1", rows = 1) %>%
+  tab_row_group(label = "Group 2", rows = 2)
+
 
 CA_yes_vote_pooled_t <- t.test(CA_2009_yes_vote$rc_rate, CA_2011_yes_vote$rc_rate, var.equal = T)
 CA_no_vote_pooled_t  <- t.test(CA_2009_no_vote$rc_rate, CA_2011_no_vote$rc_rate, var.equal = T)
 
 #take all counties in 2011 and do a test to see if theres a difference between the yeses and nos. With a p.value of .64, this says now before the vote of decriminalization, arrests rates were the same. After P.value is much lower so we are closer to being able to reject the null
+
 CA_2009 <-
   CA_2006_2016 %>%
   filter(year == 2009)
@@ -203,6 +212,7 @@ CA_all_counties <- t.test(CA_2009_yes_vote$rc_rate, CA_2009_no_vote$rc_rate, var
 CA_all_counties_after_vote <- t.test(CA_2011_yes_vote$rc_rate, CA_2011_no_vote$rc_rate, var.equal = T)
 
 CA_all_counties_after_vote
+
 #California
 
 CA_2006_2016 <-
@@ -340,10 +350,41 @@ anti_join(AZ_2017_no_vote, AZ_2015_no_vote, by = "ctnm")
 
 AZ_2017_no_vote <- AZ_2017_no_vote[-c(5), ]
 
+#for Jonathan. How do I visualize these two things together in a table?
+
 t.test(AZ_2015_yes_vote$rc_rate, AZ_2017_yes_vote$rc_rate, paired = T)
 t.test(AZ_2015_no_vote$rc_rate, AZ_2017_no_vote$rc_rate, paired = T)
 
+AZ_2006_2020 <- AZ_2006_2020 %>%
+  mutate(year = year %>%
+           as.factor) %>%
+  mutate(Approved_Prop = Approved_Prop %>%
+           as.factor)
 
+AZ_boxPlot_Ch1_1 <- AZ_2006_2020 %>%
+  filter(year %in% c(2015 , 2017)) %>%
+  ggplot(aes(y = rc_rate, x = year)) + 
+  geom_boxplot(aes(color = Approved_Prop)) + 
+  facet_wrap(~Approved_Prop) +
+  geom_signif(comparisons = list(c("2015" , "2017")) , 
+    map_signif_level = TRUE,
+    textsize = 6,
+    step_increase = .1
+  ) +
+  ylim(0, 1500) +
+  labs(
+    x = "Year",
+    y = "Arrest rates – all races, per 100,000",
+    title = "Arizona Arrest Rates Before and After Referendum",
+    caption = "Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1"
+  ) +
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5)) 
+
+ggsave(AZ_boxPlot_Ch1_1, file = "C:/Users/carol/Desktop/Dissertation Code/Dissertation-Code/Images/AZ_boxPlot_Ch1_1.png")
+
+
+#this one is probably not helpful. think about how a pooled t.test might be beneficial/if it is. 
 t.test(AZ_2015_yes_vote$rc_rate, AZ_2017_yes_vote$rc_rate, var.equal = T)
 t.test(AZ_2015_no_vote$rc_rate, AZ_2017_no_vote$rc_rate, var.equal = T)
 
@@ -364,7 +405,6 @@ wilcox.test(AZ_2006_2020 %>%
 
 AZ_2006_2020 %>%
   ggplot(aes(x = year, y = rc_tot, group = year)) + geom_boxplot()
-
 
 #yes vs no counties without year consideration 
 
@@ -457,11 +497,28 @@ Let's run some regressions. COLORADO
 colnames(CO_2000_2010)[25]<-"Approved_Prop" 
 colnames(CO_2000_2010)[29]<-"Percent_Yes"  
 
+CO_2000_2010 %>%
+  filter(Approved_Prop == "Y") %>%
+  filter(year == 2006) %>%
+  nrow()
+
+CO_2000_2010 %>%
+  filter(Approved_Prop == "N") %>%
+  filter(year == 2006) %>%
+  nrow()
+
+CO_2000_2010 <- CO_2000_2010 %>%
+  mutate(year = year %>%
+           as.factor) %>%
+  mutate(Approved_Prop = Approved_Prop %>%
+           as.factor)
+
 # Create new data frames for each year
 CO_before_2006_yes_vote <- CO_2000_2010 %>%
   filter(year <= 2006) %>%
   filter(Approved_Prop == "Y") %>%
   drop_na()
+
 
 
 CO_before_2006_no_vote <- CO_2000_2010 %>%
@@ -484,8 +541,8 @@ CO_after_2006_no_vote <- CO_2000_2010 %>%
 
 #paired t-test
 
-t.test(CO_before_2006_yes_vote$rc_rate, CO_after_2006_yes_vote$rc_rate, paired = F)
-t.test(CO_before_2006_no_vote$rc_rate , CO_after_2006_no_vote$rc_rate, paired = F)
+#t.test(CO_before_2006_yes_vote$rc_rate, CO_after_2006_yes_vote$rc_rate, paired = F)
+#t.test(CO_before_2006_no_vote$rc_rate , CO_after_2006_no_vote$rc_rate, paired = F)
 
 #take 2005 and 2007, do paired t-test for yes and no. Then get the change in arrest rates from '05 to '07. Those changes are a pooled T-test. Check to see if variance is equal. this will lead to a treatment effects regression. doc on t.test function will give a lot. look at pooled and paired.
 
@@ -511,6 +568,7 @@ nrow(CO_2007_no_vote)
 anti_join(CO_2005_yes_vote, CO_2007_yes_vote, by="County")
 anti_join(CO_2007_no_vote, CO_2005_no_vote, by = "County")
 
+CO_2005_yes_vote <- CO_2005_yes_vote[-c(12), ]
 CO_2005_no_vote <- CO_2005_no_vote[-c(5, 9, 10, 12, 25, 35, 40), ]
 CO_2007_no_vote <- CO_2007_no_vote[-c(23), ]
 
@@ -520,14 +578,41 @@ t.test(CO_2005_no_vote$rc_rate, CO_2007_no_vote$rc_rate, paired = T)
 
 t.test(CO_2005_yes_vote$rc_rate, CO_2007_yes_vote$rc_rate, var.equal = T)
 t.test(CO_2005_no_vote$rc_rate, CO_2007_no_vote$rc_rate, var.equal = T)
+
+
+CO_boxPlot_Ch1_1 <- CO_2000_2010 %>%
+  filter(year %in% c(2005 , 2007)) %>%
+  ggplot(aes(y = rc_rate, x = year)) + 
+  geom_boxplot(aes(color = Approved_Prop)) + 
+  facet_wrap(~Approved_Prop) +
+  geom_signif(comparisons = list(c("2005" , "2007")) , 
+    map_signif_level = TRUE,
+    textsize = 6,
+    step_increase = .1
+  ) +
+  ylim(0, 800) +
+  labs(
+    x = "Year",
+    y = "Arrest rates – all races, per 100,000",
+    title = "Colorado Arrest Rates Before and After Referendum",
+    caption = "Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1"
+  ) +
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5)) 
+
+ggsave(CO_boxPlot_Ch1_1, file = "C:/Users/carol/Desktop/Dissertation Code/Dissertation-Code/Images/CO_boxPlot_Ch1_1.png")
+
 # 
 
 CO_2000_2010 <-
   CO_2000_2010 %>%
   mutate(rc_tot = rc_tot %>% 
            str_remove_all(",") %>%
-           as.numeric())
+           as.numeric(), 
+         year = year %>%
+           as.numeric)
 
+class(CO_2000_2010$year)
 
 wilcox.test(CO_2000_2010 %>%
               filter(year <= 2006) %>%
@@ -537,7 +622,7 @@ wilcox.test(CO_2000_2010 %>%
   select(rc_tot) %>%
   unlist)
 
-wilcox.test(CO_2000_2010 %>%
+CO_wilcox_test <- wilcox.test(CO_2000_2010 %>%
               filter(year <= 2006) %>%
             select(rc_rate) %>%
               unlist , CO_2000_2010 %>%
@@ -545,11 +630,31 @@ wilcox.test(CO_2000_2010 %>%
   select(rc_rate) %>%
   unlist)
 
+
+before_2006 <- CO_2000_2010 %>% 
+  filter(year <= 2006)
+after_2006 <- CO_2000_2010 %>% 
+  filter(year > 2006)
+
+CO_summary_before <- summarize(before_2006, mean_rc_rate = mean(rc_rate) , median_rc_rate = median(rc_rate))
+
+CO_summary_after <- summarize(after_2006, mean_rc_rate = mean(rc_rate) , median_rc_rate = median(rc_rate))
+
+CO_meanandmedianbeforeandafter <- rbind(CO_summary_before, CO_summary_after)
+
+stargazer(CO_meanandmedianbeforeandafter, type = latex)
+
 CO_2000_2010 %>%
   ggplot(aes(x = year, y = rc_tot, group = year)) + geom_boxplot()
 
-CO_2000_2010 %>%
-  ggplot(aes(x = year, y = rc_rate, group = year)) + geom_boxplot()
+CO_boxplot2_ch1 <- CO_2000_2010 %>%
+  ggplot(aes(x = year, y = rc_rate, group = year)) + geom_boxplot() +
+  labs(
+    x = "Year",
+    y = "Arrest rates – all races, per 100,000",
+    title = "Colorado Arrest Rates by Year")
+
+ggsave(CO_boxplot2_ch1, file = "C:/Users/carol/Desktop/Dissertation Code/Dissertation-Code/Images/CO_boxplot2_ch1.png")
 
 #yes vs no counties without year consideration 
 
@@ -628,10 +733,15 @@ ggplot(CO_2000_2010, aes(x = Percent_Yes , y = rc_rate)) + geom_point()
 
 cor.test(CO_2000_2010$w_rate , CO_2000_2010$b_rate)
 
-CO_2000_2010 %>%
+CO_table_1_Ch1 <- CO_2000_2010 %>%
   pivot_longer(cols = c("w_rate", "b_rate" , "i_rate" , "a_rate"
   ) , names_to = "race" , values_to = "rate") %>%
-  med1way(formula = rate ~ race)
+  med1way(formula = rate ~ race) 
+
+
+write.table(CO_table_1_Ch1, file = "C:/Users/carol/Desktop/Dissertation Code/Dissertation-Code/Images/CO_table_1_Ch1.png")
+
+
 
 CO_2000_2010 %>%
   pivot_longer(cols = c("w_rate", "b_rate" , "i_rate" , "a_rate"
