@@ -89,7 +89,7 @@ write.csv(OH_2010_2020,  "C:/Users/carol/Downloads/OH_2010_2020.csv", row.names=
 ```
 Load all clean data
 
-```{r}
+```{r Loading Clean Data}
 
 CA_2006_2016<- read.csv(
   "C:/Users/carol/Downloads/CA_2006_2016.csv",
@@ -128,7 +128,7 @@ ND_2012_2020<- read.csv(
 
 Let's run some regressions. CALIFORNIA
 
-```{r}
+```{r California}
 
 colnames(CA_2006_2016)[2]<-"year"  
 colnames(CA_2006_2016)[25]<-"Approved_Prop"  
@@ -295,36 +295,77 @@ CA_2006_2016 %>%
 
 Let's run some regressions. ARIZONA
 
-```{r}
+```{r Arizona}
 colnames(AZ_2006_2020)[25]<-"Approved_Prop" 
 colnames(AZ_2006_2020)[29]<-"Percent_Yes"  
 
+#count counties
 
-AZ_before_2006_yes_vote <- AZ_2006_2020 %>%
+AZ_2016_yes_votes <- AZ_2006_2020 %>%
+  filter(year == 2016) %>%
+  filter(Approved_Prop == "Yes") 
+
+n_distinct(AZ_2006_2020$ctnm)
+
+#median and mean change before and after referendum
+
+AZ_before_2016 <- AZ_2006_2020 %>% 
+  filter(year <= 2016)
+
+AZ_after_2016 <- AZ_2006_2020 %>% 
+  filter(year < 2020, year > 2016)
+
+AZ_summary_before <- summarize(AZ_before_2016, mean_rc_rate = mean(rc_rate) , median_rc_rate = median(rc_rate))
+
+AZ_summary_after <- summarize(AZ_after_2016, mean_rc_rate = mean(rc_rate) , median_rc_rate = median(rc_rate))
+
+wilcox.test(AZ_2006_2020 %>%
+              filter(year <= 2016) %>%
+            select(rc_rate) %>%
+              unlist , AZ_2006_2020 %>%
+  filter(year < 2020, year > 2016) %>%
+  select(rc_rate) %>%
+  unlist)
+
+AZ_meanandmedianbeforeandafter <- cbind(AZ_summary_before, AZ_summary_after)
+
+stargazer(AZ_meanandmedianbeforeandafter, type = "latex")
+
+#do it based on prop approval 
+
+AZ_before_2016_yes_vote <- AZ_2006_2020 %>%
   filter(year <= 2016 ) %>%
-  filter(Approved_Prop == "Yes") %>%
-  drop_na()
+  filter(Approved_Prop == "Yes") 
 
 
-AZ_before_2006_no_vote <- AZ_2006_2020 %>%
+AZ_before_2016_no_vote <- AZ_2006_2020 %>%
   filter(year <= 2016 ) %>%
-  filter(Approved_Prop == "No") %>%
-  drop_na()
+  filter(Approved_Prop == "No") 
 
 
-AZ_after_2006_yes_vote <- AZ_2006_2020 %>%
-  filter(year > 2016 ) %>% 
-  filter(Approved_Prop == "Yes") %>%
-  drop_na()
+AZ_after_2016_yes_vote <- AZ_2006_2020 %>%
+  filter(year < 2020, year > 2016 ) %>% 
+  filter(Approved_Prop == "Yes") 
  
+AZ_after_2016_no_vote <- AZ_2006_2020 %>%
+  filter(year < 2020, year > 2016 ) %>%
+  filter(Approved_Prop == "No") 
 
-AZ_after_2006_no_vote <- AZ_2006_2020 %>%
-  filter(year > 2016 ) %>%
-  filter(Approved_Prop == "No") %>%
-  drop_na()
+summary_AZ_yes_before <- summarize(AZ_before_2016_yes_vote,  mean_rc_rate = mean(rc_rate) , median_rc_rate = median(rc_rate))
 
-t.test(AZ_before_2006_yes_vote$rc_rate, AZ_after_2006_yes_vote$rc_rate, paired = F)
-t.test(AZ_before_2006_no_vote$rc_rate , AZ_after_2006_no_vote$rc_rate, paired = F)
+summary_AZ_yes_after <- summarize(AZ_after_2016_yes_vote, mean_rc_rate = mean(rc_rate) , median_rc_rate = median(rc_rate))
+
+summary_AZ_no_before <- summarize(AZ_before_2016_no_vote, mean_rc_rate = mean(rc_rate) , median_rc_rate = median(rc_rate))
+
+summary_AZ_no_after <- summarize(AZ_after_2016_no_vote, mean_rc_rate = mean(rc_rate) , median_rc_rate = median(rc_rate))
+
+AZ_Before_and_After_Y_and_N <- cbind(summary_AZ_yes_before, summary_AZ_yes_after, summary_AZ_no_before, summary_AZ_no_after)
+
+stargazer(AZ_Before_and_After_Y_and_N , type = "latex")
+
+t.test(AZ_before_2016_yes_vote$rc_rate, AZ_after_2016_yes_vote$rc_rate, paired = F)
+
+t.test(AZ_before_2016_no_vote$rc_rate , AZ_after_2016_no_vote$rc_rate, paired = F)
 
 #take 2015 and 2017, do paired t-test for yes and no. Then get the change in arrest rates from '15 to '17. Those changes are a pooled T-test. Check to see if variance is equal. this will lead to a treatment effects regression. doc on t.test function will give a lot. look at pooled and paired.
 
@@ -350,10 +391,18 @@ anti_join(AZ_2017_no_vote, AZ_2015_no_vote, by = "ctnm")
 
 AZ_2017_no_vote <- AZ_2017_no_vote[-c(5), ]
 
+summarize(AZ_2017_no_vote, mean_rc_rate = mean(rc_rate) , median_rc_rate = median(rc_rate))
+
+summarize(AZ_2017_yes_vote, mean_rc_rate = mean(rc_rate) , median_rc_rate = median(rc_rate))
+
+summarize(AZ_2015_no_vote, mean_rc_rate = mean(rc_rate) , median_rc_rate = median(rc_rate))
+
+summarize(AZ_2015_yes_vote, mean_rc_rate = mean(rc_rate) , median_rc_rate = median(rc_rate))
 #for Jonathan. How do I visualize these two things together in a table?
 
 t.test(AZ_2015_yes_vote$rc_rate, AZ_2017_yes_vote$rc_rate, paired = T)
 t.test(AZ_2015_no_vote$rc_rate, AZ_2017_no_vote$rc_rate, paired = T)
+
 
 AZ_2006_2020 <- AZ_2006_2020 %>%
   mutate(year = year %>%
@@ -419,41 +468,59 @@ wilcox.test(AZ_2006_2020 %>%
 #yes v no counties comparing after 2016 prop
 
 wilcox.test(AZ_2006_2020 %>%
-              filter(Approved_Prop == "Yes" , year > 2016 ) %>%
+              filter(Approved_Prop == "Yes" , year > 2016 , year < 2020) %>%
             select(rc_tot) %>%
               unlist , AZ_2006_2020 %>%
-  filter(Approved_Prop == "No", year > 2016 ) %>%
+  filter(Approved_Prop == "No", year > 2016 , year < 2020 ) %>%
   select(rc_tot) %>%
   unlist)
 
-wilcox.test(AZ_2006_2020 %>%
-              filter(Approved_Prop == "Yes" , year > 2016 ) %>%
-            select(rc_rate) %>%
-              unlist , AZ_2006_2020 %>%
-  filter(Approved_Prop == "No", year > 2016 ) %>%
-  select(rc_rate) %>%
-  unlist)
 
 #there was a preexisting difference in arrest rates from those counties and then they voted yes or no, and then there wasn't a difference. 
 
-wilcox.test(AZ_2006_2020 %>%
-              filter(Approved_Prop == "Yes" , year <= 2016 ) %>%
-            select(rc_tot) %>%
-              unlist , AZ_2006_2020 %>%
-  filter(Approved_Prop == "No", year <= 2016 ) %>%
-  select(rc_tot) %>%
-  unlist)
 
 wilcox.test(AZ_2006_2020 %>%
               filter(Approved_Prop == "Yes" , year <= 2016 ) %>%
             select(rc_rate) %>%
               unlist , AZ_2006_2020 %>%
   filter(Approved_Prop == "No", year <= 2016 ) %>%
+  select(rc_rate) %>%
+  unlist)
+
+wilcox.test(AZ_2006_2020 %>%
+              filter(Approved_Prop == "Yes" , year < 2020, year > 2016 ) %>%
+            select(rc_rate) %>%
+              unlist , AZ_2006_2020 %>%
+  filter(Approved_Prop == "No", year < 2020, year > 2016 ) %>%
   select(rc_rate) %>%
   unlist)
 
 AZ_2006_2020 %>%
   ggplot(aes(x = year, y = rc_rate, group = year)) + geom_boxplot()
+
+#ask JONATHAN how to do this one. 
+
+AZ_boxPlot3_Ch1 <- AZ_2006_2020 %>%
+  filter(year <= 2016 ,  2020 > year > 2016) %>%
+  ggplot(aes(y = rc_rate, x = Approved_Prop)) + 
+  geom_boxplot() + 
+  facet_wrap(~year) +
+  geom_signif(comparisons = list(c("Yes" , "No")) , 
+    map_signif_level = TRUE,
+    textsize = 6,
+    step_increase = .1
+  ) +
+  ylim(0, 2000) +
+  labs(
+    x = "Approved Proposition",
+    y = "Arrest rates – all races, per 100,000",
+    title = "Arizona Arrest Rates Before and After Referendum",
+    caption = "Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1"
+  ) +
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5)) 
+
+ggsave(AZ_boxPlot_Ch1_1, file = "C:/Users/carol/Desktop/Dissertation Code/Dissertation-Code/Images/AZ_boxPlot3_Ch1.png")
 
 #first is significant for year <= 2016, second is significant for approved.prop and third is significant for both together (how the yes, no question augmented whether before or after 2016). 
 
@@ -488,12 +555,21 @@ AZ_2006_2020 %>%
   group_by(race , year > 2016 , Approved_Prop) %>%
   summarize(rate_med = median(na.rm = T , rate))
 
+AZ_boxplot2_ch1 <- AZ_2006_2020 %>%
+  ggplot(aes(x = year, y = rc_rate, group = year)) + geom_boxplot() +
+  labs(
+    x = "Year",
+    y = "Arrest rates – all races, per 100,000",
+    title = "Arizona Arrest Rates by Year")
+
+ggsave(AZ_boxplot2_ch1, file = "C:/Users/carol/Desktop/Dissertation Code/Dissertation-Code/Images/AZ_boxplot2_ch1.png")
+
 ```
 
 
 Let's run some regressions. COLORADO
 
-```{r}
+```{r Colorado}
 colnames(CO_2000_2010)[25]<-"Approved_Prop" 
 colnames(CO_2000_2010)[29]<-"Percent_Yes"  
 
@@ -576,8 +652,8 @@ t.test(CO_2005_yes_vote$rc_rate, CO_2007_yes_vote$rc_rate, paired = T)
 t.test(CO_2005_no_vote$rc_rate, CO_2007_no_vote$rc_rate, paired = T)
 
 
-t.test(CO_2005_yes_vote$rc_rate, CO_2007_yes_vote$rc_rate, var.equal = T)
-t.test(CO_2005_no_vote$rc_rate, CO_2007_no_vote$rc_rate, var.equal = T)
+t.test(before_2006_yes$rc_rate, after_2006_yes$rc_rate, var.equal = T)
+t.test(before_2006_no$rc_rate, after_2006_no$rc_rate, var.equal = T)
 
 
 CO_boxPlot_Ch1_1 <- CO_2000_2010 %>%
@@ -640,9 +716,42 @@ CO_summary_before <- summarize(before_2006, mean_rc_rate = mean(rc_rate) , media
 
 CO_summary_after <- summarize(after_2006, mean_rc_rate = mean(rc_rate) , median_rc_rate = median(rc_rate))
 
-CO_meanandmedianbeforeandafter <- rbind(CO_summary_before, CO_summary_after)
+CO_meanandmedianbeforeandafter <- cbind(CO_summary_before, CO_summary_after)
 
-stargazer(CO_meanandmedianbeforeandafter, type = latex)
+stargazer(CO_meanandmedianbeforeandafter, type = "latex")
+
+before_2006_yes <- CO_2000_2010 %>% 
+  filter(year <= 2006) %>%
+  filter(Approved_Prop == "Y")
+
+summarize(before_2006_yes, mean_rc_rate = mean(rc_rate) , median_rc_rate = median(rc_rate))
+
+after_2006_yes <- CO_2000_2010 %>% 
+  filter(year > 2006) %>%
+  filter(Approved_Prop == "Y")
+
+before_2006_no <- CO_2000_2010 %>% 
+  filter(year <= 2006) %>%
+  filter(Approved_Prop == "N")
+
+after_2006_no <- CO_2000_2010 %>% 
+  filter(year > 2006) %>%
+  filter(Approved_Prop == "N")
+
+CO_summary_before_yes <- summarize(before_2006_yes, mean_rc_rate = mean(rc_rate) , median_rc_rate = median(rc_rate))
+
+CO_summary_after_yes <- summarize(after_2006_yes, mean_rc_rate = mean(rc_rate) , median_rc_rate = median(rc_rate))
+
+CO_summary_before_no <- summarize(before_2006_no, mean_rc_rate = mean(rc_rate) , median_rc_rate = median(rc_rate))
+
+CO_summary_after_no <- summarize(after_2006_no, mean_rc_rate = mean(rc_rate) , median_rc_rate = median(rc_rate))
+
+CO_Summary_Before_and_after_Y_and_N <- cbind(CO_summary_before_yes, CO_summary_after_yes, CO_summary_before_no, CO_summary_after_no)
+
+kbl(CO_Summary_Before_and_after_Y_and_N, booktabs =T)
+  
+
+stargazer(CO_Summary_Before_and_after_Y_and_N, type = "latex")
 
 CO_2000_2010 %>%
   ggplot(aes(x = year, y = rc_tot, group = year)) + geom_boxplot()
@@ -675,7 +784,7 @@ wilcox.test(CO_2000_2010 %>%
   select(rc_rate) %>%
   unlist)
 
-#yes v no counties comparing after 2016 prop
+#yes v no counties comparing after 2006 prop
 
 wilcox.test(CO_2000_2010 %>%
               filter(Approved_Prop == "Y" , year > 2006 ) %>%
@@ -693,6 +802,17 @@ wilcox.test(CO_2000_2010 %>%
   select(rc_rate) %>%
   unlist)
 
+#FIGURE OUT VISUALIZING THIS WITH JONATHAN
+
+CO_before_yes_and_no <- t.test(before_2006_yes$rc_rate, before_2006_no$rc_rate, var.equal = FALSE)
+
+CO_after_yes_and_no <-t.test(after_2006_yes$rc_rate, after_2006_no$rc_rate, var.equal = FALSE)
+
+pandoc.table(CO_before_yes_and_no, caption = "Colorado Before Referendum", style = "rmarkdown", highlight = "signif", split.cells = 30)
+
+pandoc.table(CO_after_yes_and_no, caption = "Colorado Before Referendum", style = "rmarkdown", highlight = "signif", split.cells = 30)
+
+  
 #there was a preexisting difference in arrest rates from those counties and then they voted yes or no, and then there wasn't a difference. 
 
 wilcox.test(CO_2000_2010 %>%
@@ -700,14 +820,14 @@ wilcox.test(CO_2000_2010 %>%
             select(rc_tot) %>%
               unlist , CO_2000_2010 %>%
   filter(Approved_Prop == "N", year <= 2006 ) %>%
-  select(rc_tot) %>%
+  select(rc_rate) %>%
   unlist)
 
 wilcox.test(CO_2000_2010 %>%
-              filter(Approved_Prop == "Y" , year <= 2006 ) %>%
+              filter(Approved_Prop == "N" , year <= 2006 ) %>%
             select(rc_rate) %>%
               unlist , CO_2000_2010 %>%
-  filter(Approved_Prop == "N", year <= 2006 ) %>%
+  filter(Approved_Prop == "N", year > 2006 ) %>%
   select(rc_rate) %>%
   unlist)
 
@@ -753,7 +873,7 @@ CO_2000_2010 %>%
 
 Let's run some regressions. North Dakota
 
-```{r}
+```{r North Dakota}
 colnames(ND_2012_2020)[25]<-"Approved_Prop" 
 colnames(ND_2012_2020)[29]<-"Percent_Yes"  
 colnames(ND_2012_2020)[2]<-"year"  
