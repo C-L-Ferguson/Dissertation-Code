@@ -1,6 +1,6 @@
 
 % Table created by stargazer v.5.2.3 by Marek Hlavac, Social Policy Institute. E-mail: marek.hlavac at gmail.com
-% Date and time: Thu, Feb 08, 2024 - 12:11:10 PM
+% Date and time: Tue, Feb 27, 2024 - 2:15:33 PM
 \begin{table}[!htbp] \centering 
   \caption{Probation by Contested Primary} 
   \label{} 
@@ -11,18 +11,18 @@
 \cline{2-2} 
 \\[-1.8ex] & Percentage\_Probation \\ 
 \hline \\[-1.8ex] 
- Contested\_Primary & $-$0.351 \\ 
-  & (0.648) \\ 
+ Contested\_Primary1 & $-$0.616 \\ 
+  & (0.626) \\ 
   & \\ 
- Constant & 11.425$^{***}$ \\ 
-  & (0.267) \\ 
+ Constant & 11.690$^{***}$ \\ 
+  & (0.107) \\ 
   & \\ 
 \hline \\[-1.8ex] 
-Observations & 564 \\ 
-R$^{2}$ & 0.001 \\ 
-Adjusted R$^{2}$ & $-$0.001 \\ 
-Residual Std. Error & 5.783 (df = 562) \\ 
-F Statistic & 0.294 (df = 1; 562) \\ 
+Observations & 3,275 \\ 
+R$^{2}$ & 0.0003 \\ 
+Adjusted R$^{2}$ & $-$0.00001 \\ 
+Residual Std. Error & 6.046 (df = 3273) \\ 
+F Statistic & 0.967 (df = 1; 3273) \\ 
 \hline 
 \hline \\[-1.8ex] 
 \textit{Note:}  & \multicolumn{1}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 

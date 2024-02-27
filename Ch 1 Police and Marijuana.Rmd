@@ -398,7 +398,6 @@ summarize(AZ_2017_yes_vote, mean_rc_rate = mean(rc_rate) , median_rc_rate = medi
 summarize(AZ_2015_no_vote, mean_rc_rate = mean(rc_rate) , median_rc_rate = median(rc_rate))
 
 summarize(AZ_2015_yes_vote, mean_rc_rate = mean(rc_rate) , median_rc_rate = median(rc_rate))
-#for Jonathan. How do I visualize these two things together in a table?
 
 t.test(AZ_2015_yes_vote$rc_rate, AZ_2017_yes_vote$rc_rate, paired = T)
 t.test(AZ_2015_no_vote$rc_rate, AZ_2017_no_vote$rc_rate, paired = T)
@@ -935,9 +934,28 @@ CO_2007_no_vote <- CO_2007_no_vote[-c(23), ]
 t.test(ND_2017_yes_vote$rc_rate, ND_2019_yes_vote$rc_rate, paired = T)
 t.test(ND_2017_no_vote$rc_rate, ND_2019_no_vote$rc_rate, paired = T)
 
+#note I CAN PUT THESE LOST VALUES BACK IN THE CALCULATION
 
-t.test(ND_2017_yes_vote$rc_rate, ND_2019_yes_vote$rc_rate, var.equal = T)
-t.test(ND_2017_no_vote$rc_rate, ND_2019_no_vote$rc_rate, var.equal = T)
+ND_2017_yes_vote <- ND_2012_2020 %>%
+  filter(year == 2017) %>%
+  filter(Approved_Prop == "Y") 
+
+ND_2019_yes_vote <- ND_2012_2020 %>%
+  filter(year == 2019 ) %>%
+  filter(Approved_Prop == "Y")
+
+ND_2017_no_vote <- ND_2012_2020 %>%
+  filter(year == 2017 ) %>% 
+  filter(Approved_Prop == "N")
+
+ND_2019_no_vote <- ND_2012_2020 %>%
+  filter(year == 2019 ) %>%
+  filter(Approved_Prop == "N") 
+
+summarise(ND_2017_yes_vote, Mean_2017_Yes_RC_Rate = mean(rc_rate) , Median_2017_Yes_RC_rate = median(rc_rate))
+summarise(ND_2017_no_vote, Mean_2017_No_RC_Rate = mean(rc_rate) , Median_2017_No_RC_Rate = median(rc_rate))
+summarise(ND_2019_yes_vote, Mean_2019_Yes_RC_Rate = mean(rc_rate) , Median_2019_Yes_RC_rate = median(rc_rate))
+summarise(ND_2019_no_vote, Mean_2019_No_RC_Rate = mean(rc_rate) , Median_2019_No_RC_Rate = median(rc_rate))
 
 ###
 ND_2012_2020 <-

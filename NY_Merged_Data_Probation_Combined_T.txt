@@ -1,14 +1,14 @@
-\begin{longtable}{lrrrrrrrrl}
+\begin{longtable}{lrrrrrrrl}
 \toprule
-.y. & group1 & group2 & n1 & n2 & statistic & df & p & p.adj & p.adj.signif \\ 
+.y. & group1 & group2 & n1 & n2 & statistic & df & p & p.signif \\ 
 \midrule\addlinespace[2.5pt]
-\multicolumn{10}{l}{Group 2} \\ 
+\multicolumn{9}{l}{Group 2} \\ 
 \midrule\addlinespace[2.5pt]
-Percentage\_Probation & 0 & 1 & 468 & 96 & 0.3606052 & 105.4101 & 0.719000 & 0.719000 & ns \\ 
+Percentage\_Probation & 0 & 1 & 3179 & 96 & 0.6447321 & 97.33831 & 5.21e-01 & ns \\ 
 \midrule\addlinespace[2.5pt]
-\multicolumn{10}{l}{Group 1} \\ 
+\multicolumn{9}{l}{Group 1} \\ 
 \midrule\addlinespace[2.5pt]
-Percentage\_Prison & 0 & 1 & 468 & 96 & 3.7482271 & 200.7156 & 0.000233 & 0.000233 & *** \\ 
+Percentage\_Prison & 0 & 1 & 3179 & 96 & 4.6998160 & 108.23899 & 7.71e-06 & **** \\ 
 \bottomrule
 \end{longtable}
 
