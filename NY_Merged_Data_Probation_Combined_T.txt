@@ -1,14 +1,21 @@
-\begin{longtable}{lrrrrrrrl}
+\begin{longtable}{llrrrrrrrl}
 \toprule
-.y. & group1 & group2 & n1 & n2 & statistic & df & p & p.signif \\ 
+.y. & group1 & group2 & n1 & n2 & statistic & df & p & p.adj & p.adj.signif \\ 
 \midrule\addlinespace[2.5pt]
-\multicolumn{9}{l}{Group 2} \\ 
+\multicolumn{10}{l}{Group 2} \\ 
 \midrule\addlinespace[2.5pt]
-Percentage\_Probation & 0 & 1 & 3179 & 96 & 0.6447321 & 97.33831 & 5.21e-01 & ns \\ 
+Percentage\_Prison &  NA & 1 & 4 & 248 & 0.4628553 & 3.178615 & 6.73e-01 & 8.98e-01 & ns \\ 
 \midrule\addlinespace[2.5pt]
-\multicolumn{9}{l}{Group 1} \\ 
+\multicolumn{10}{l}{Group 1} \\ 
 \midrule\addlinespace[2.5pt]
-Percentage\_Prison & 0 & 1 & 3179 & 96 & 4.6998160 & 108.23899 & 7.71e-06 & **** \\ 
+Percentage\_Prison &  NA & 0 & 4 & 2154 & -0.8662147 & 3.045260 & 4.49e-01 & 8.98e-01 & ns \\ 
+\midrule\addlinespace[2.5pt]
+\multicolumn{10}{l}{\vspace*{-5mm}} \\ 
+\midrule\addlinespace[2.5pt]
+Percentage\_Prison & 0 & 1 & 2154 & 248 & 6.9747160 & 386.806579 & 1.33e-11 & 3.99e-11 & **** \\ 
+Percentage\_Probation &  NA & 0 & 4 & 2154 & 1.3052081 & 3.020565 & 2.82e-01 & 4.95e-01 & ns \\ 
+Percentage\_Probation &  NA & 1 & 4 & 248 & 1.5867222 & 3.297720 & 2.03e-01 & 4.95e-01 & ns \\ 
+Percentage\_Probation & 0 & 1 & 2154 & 248 & 1.3929120 & 282.949175 & 1.65e-01 & 4.95e-01 & ns \\ 
 \bottomrule
 \end{longtable}
 

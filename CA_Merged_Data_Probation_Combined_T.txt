@@ -4,11 +4,11 @@
 \midrule\addlinespace[2.5pt]
 \multicolumn{10}{l}{Group 2} \\ 
 \midrule\addlinespace[2.5pt]
-Percentage\_Probation & 0 & 1 & 340 & 201 & 1.1236452 & 430.7668 & 0.262 & 0.262 & ns \\ 
+Percentage\_Probation & 0 & 1 & 1012 & 546 & 1.131932 & 1310.353 & 0.258 & 0.258 & ns \\ 
 \midrule\addlinespace[2.5pt]
 \multicolumn{10}{l}{Group 1} \\ 
 \midrule\addlinespace[2.5pt]
-Percentage\_Prison & 0 & 1 & 340 & 201 & 0.2104696 & 417.0655 & 0.833 & 0.833 & ns \\ 
+Percentage\_Prison & 0 & 1 & 1012 & 546 & 1.138059 & 1339.790 & 0.255 & 0.255 & ns \\ 
 \bottomrule
 \end{longtable}
 

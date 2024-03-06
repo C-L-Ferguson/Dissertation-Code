@@ -1,8 +1,8 @@
 
 % Table created by stargazer v.5.2.3 by Marek Hlavac, Social Policy Institute. E-mail: marek.hlavac at gmail.com
-% Date and time: Tue, Feb 27, 2024 - 4:21:37 PM
+% Date and time: Wed, Feb 28, 2024 - 12:56:02 PM
 \begin{table}[!htbp] \centering 
-  \caption{Prison by Contested Primary} 
+  \caption{Prison by Contested General and Election Year, Decarceratory DAs} 
   \label{} 
 \begin{tabular}{@{\extracolsep{5pt}}lc} 
 \\[-1.8ex]\hline 
@@ -11,21 +11,24 @@
 \cline{2-2} 
 \\[-1.8ex] & Percentage\_Prison \\ 
 \hline \\[-1.8ex] 
- Contested\_Primary0 & 0.796 \\ 
-  & (1.789) \\ 
+ Contested & $-$16.668$^{***}$ \\ 
+  & (2.030) \\ 
   & \\ 
- Contested\_Primary1 & $-$0.430 \\ 
-  & (1.801) \\ 
+ Election\_Year0.5 & $-$8.220$^{***}$ \\ 
+  & (2.394) \\ 
   & \\ 
- Constant & 6.053$^{***}$ \\ 
-  & (1.787) \\ 
+ Election\_Year1 & $-$8.865$^{***}$ \\ 
+  & (2.329) \\ 
+  & \\ 
+ Constant & 42.884$^{***}$ \\ 
+  & (1.727) \\ 
   & \\ 
 \hline \\[-1.8ex] 
-Observations & 2,406 \\ 
-R$^{2}$ & 0.011 \\ 
-Adjusted R$^{2}$ & 0.010 \\ 
-Residual Std. Error & 3.574 (df = 2403) \\ 
-F Statistic & 13.139$^{***}$ (df = 2; 2403) \\ 
+Observations & 206 \\ 
+R$^{2}$ & 0.281 \\ 
+Adjusted R$^{2}$ & 0.271 \\ 
+Residual Std. Error & 13.963 (df = 202) \\ 
+F Statistic & 26.380$^{***}$ (df = 3; 202) \\ 
 \hline 
 \hline \\[-1.8ex] 
 \textit{Note:}  & \multicolumn{1}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 

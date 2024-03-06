@@ -1,6 +1,6 @@
 
 % Table created by stargazer v.5.2.3 by Marek Hlavac, Social Policy Institute. E-mail: marek.hlavac at gmail.com
-% Date and time: Tue, Feb 27, 2024 - 2:15:33 PM
+% Date and time: Tue, Feb 27, 2024 - 4:21:36 PM
 \begin{table}[!htbp] \centering 
   \caption{Percentage Jail by Contested Primary} 
   \label{} 
@@ -11,18 +11,21 @@
 \cline{2-2} 
 \\[-1.8ex] & Percentage\_Jail \\ 
 \hline \\[-1.8ex] 
- Contested\_Primary1 & 0.129 \\ 
-  & (0.610) \\ 
+ Contested\_Primary0 & $-$0.368 \\ 
+  & (2.746) \\ 
   & \\ 
- Constant & 13.216$^{***}$ \\ 
-  & (0.104) \\ 
+ Contested\_Primary1 & 0.469 \\ 
+  & (2.766) \\ 
+  & \\ 
+ Constant & 13.771$^{***}$ \\ 
+  & (2.744) \\ 
   & \\ 
 \hline \\[-1.8ex] 
-Observations & 3,275 \\ 
-R$^{2}$ & 0.00001 \\ 
-Adjusted R$^{2}$ & $-$0.0003 \\ 
-Residual Std. Error & 5.887 (df = 3273) \\ 
-F Statistic & 0.045 (df = 1; 3273) \\ 
+Observations & 2,406 \\ 
+R$^{2}$ & 0.002 \\ 
+Adjusted R$^{2}$ & 0.001 \\ 
+Residual Std. Error & 5.487 (df = 2403) \\ 
+F Statistic & 2.588$^{*}$ (df = 2; 2403) \\ 
 \hline 
 \hline \\[-1.8ex] 
 \textit{Note:}  & \multicolumn{1}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 

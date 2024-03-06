@@ -429,7 +429,7 @@ AZ_boxPlot_Ch1_1 <- AZ_2006_2020 %>%
   theme_bw() +
   theme(plot.title = element_text(hjust = 0.5)) 
 
-ggsave(AZ_boxPlot_Ch1_1, file = "C:/Users/carol/Desktop/Dissertation Code/Dissertation-Code/Images/AZ_boxPlot_Ch1_1.png")
+ggsave(AZ_boxPlot_Ch1_1, file = "C:/Users/carol/Desktop/Dissertation Code/Dissertation-Code/Chapter 1 Visuals/AZ_boxPlot_Ch1_1.png")
 
 
 #this one is probably not helpful. think about how a pooled t.test might be beneficial/if it is. 
@@ -519,7 +519,7 @@ AZ_boxPlot3_Ch1 <- AZ_2006_2020 %>%
   theme_bw() +
   theme(plot.title = element_text(hjust = 0.5)) 
 
-ggsave(AZ_boxPlot_Ch1_1, file = "C:/Users/carol/Desktop/Dissertation Code/Dissertation-Code/Images/AZ_boxPlot3_Ch1.png")
+ggsave(AZ_boxPlot_Ch1_1, file = "C:/Users/carol/Desktop/Dissertation Code/Dissertation-Code/Chapter 1 Visuals/AZ_boxPlot3_Ch1.png")
 
 #first is significant for year <= 2016, second is significant for approved.prop and third is significant for both together (how the yes, no question augmented whether before or after 2016). 
 
@@ -561,7 +561,7 @@ AZ_boxplot2_ch1 <- AZ_2006_2020 %>%
     y = "Arrest rates – all races, per 100,000",
     title = "Arizona Arrest Rates by Year")
 
-ggsave(AZ_boxplot2_ch1, file = "C:/Users/carol/Desktop/Dissertation Code/Dissertation-Code/Images/AZ_boxplot2_ch1.png")
+ggsave(AZ_boxplot2_ch1, file = "C:/Users/carol/Desktop/Dissertation Code/Dissertation-Code/Chapter 1 Visuals/AZ_boxplot2_ch1.png")
 
 ```
 
@@ -675,7 +675,7 @@ CO_boxPlot_Ch1_1 <- CO_2000_2010 %>%
   theme_bw() +
   theme(plot.title = element_text(hjust = 0.5)) 
 
-ggsave(CO_boxPlot_Ch1_1, file = "C:/Users/carol/Desktop/Dissertation Code/Dissertation-Code/Images/CO_boxPlot_Ch1_1.png")
+ggsave(CO_boxPlot_Ch1_1, file = "C:/Users/carol/Desktop/Dissertation Code/Dissertation-Code/Chapter 1 Visuals/CO_boxPlot_Ch1_1.png")
 
 # 
 
@@ -762,7 +762,7 @@ CO_boxplot2_ch1 <- CO_2000_2010 %>%
     y = "Arrest rates – all races, per 100,000",
     title = "Colorado Arrest Rates by Year")
 
-ggsave(CO_boxplot2_ch1, file = "C:/Users/carol/Desktop/Dissertation Code/Dissertation-Code/Images/CO_boxplot2_ch1.png")
+ggsave(CO_boxplot2_ch1, file = "C:/Users/carol/Desktop/Dissertation Code/Dissertation-Code/Chapter 1 Visuals/CO_boxplot2_ch1.png")
 
 #yes vs no counties without year consideration 
 
@@ -858,7 +858,7 @@ CO_table_1_Ch1 <- CO_2000_2010 %>%
   med1way(formula = rate ~ race) 
 
 
-write.table(CO_table_1_Ch1, file = "C:/Users/carol/Desktop/Dissertation Code/Dissertation-Code/Images/CO_table_1_Ch1.png")
+write.table(CO_table_1_Ch1, file = "C:/Users/carol/Desktop/Dissertation Code/Dissertation-Code/Chapter 1 Visuals/CO_table_1_Ch1.png")
 
 
 

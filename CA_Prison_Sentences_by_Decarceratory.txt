@@ -1,6 +1,6 @@
 
 % Table created by stargazer v.5.2.3 by Marek Hlavac, Social Policy Institute. E-mail: marek.hlavac at gmail.com
-% Date and time: Fri, Feb 16, 2024 - 12:01:20 PM
+% Date and time: Wed, Feb 28, 2024 - 12:47:50 PM
 \begin{table}[!htbp] \centering 
   \caption{California Prison by Decarceratory} 
   \label{} 
@@ -11,7 +11,7 @@
 \cline{2-2} 
 \\[-1.8ex] & Percentage\_Prison \\ 
 \hline \\[-1.8ex] 
- Decarceratory.1 & $-$0.125 \\ 
+ Decarceratory1 & $-$0.125 \\ 
   & (0.970) \\ 
   & \\ 
  Constant & 29.835$^{***}$ \\ 

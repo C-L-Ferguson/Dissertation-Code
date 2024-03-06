@@ -1,6 +1,6 @@
 
 % Table created by stargazer v.5.2.3 by Marek Hlavac, Social Policy Institute. E-mail: marek.hlavac at gmail.com
-% Date and time: Tue, Feb 27, 2024 - 2:15:34 PM
+% Date and time: Tue, Feb 27, 2024 - 4:21:37 PM
 \begin{table}[!htbp] \centering 
   \caption{Fine by Contested Primary} 
   \label{} 
@@ -11,18 +11,21 @@
 \cline{2-2} 
 \\[-1.8ex] & Percentage\_Fine \\ 
 \hline \\[-1.8ex] 
- Contested\_Primary1 & $-$6.641$^{***}$ \\ 
-  & (1.588) \\ 
+ Contested\_Primary0 & $-$0.307 \\ 
+  & (7.545) \\ 
   & \\ 
- Constant & 40.352$^{***}$ \\ 
-  & (0.272) \\ 
+ Contested\_Primary1 & $-$7.382 \\ 
+  & (7.599) \\ 
+  & \\ 
+ Constant & 41.092$^{***}$ \\ 
+  & (7.538) \\ 
   & \\ 
 \hline \\[-1.8ex] 
-Observations & 3,275 \\ 
-R$^{2}$ & 0.005 \\ 
-Adjusted R$^{2}$ & 0.005 \\ 
-Residual Std. Error & 15.327 (df = 3273) \\ 
-F Statistic & 17.496$^{***}$ (df = 1; 3273) \\ 
+Observations & 2,406 \\ 
+R$^{2}$ & 0.020 \\ 
+Adjusted R$^{2}$ & 0.019 \\ 
+Residual Std. Error & 15.076 (df = 2403) \\ 
+F Statistic & 24.499$^{***}$ (df = 2; 2403) \\ 
 \hline 
 \hline \\[-1.8ex] 
 \textit{Note:}  & \multicolumn{1}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
