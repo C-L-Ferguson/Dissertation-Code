@@ -608,7 +608,8 @@ NY_Prison_Sentences_by_Decarceratory <- lm(data = NY_Merged_Data , Percentage_Pr
 class(NY_Prison_Sentences_by_Decarceratory)
 
 
-stargazer(NY_Prison_Sentences_by_Decarceratory, type = "text" ,  title = "P-Test Results")
+stargazer(NY_Prison_Sentences_by_Decarceratory,  title = "P-Test Results") %>%
+  write_lines("C:/Users/carol/Downloads/NY_Prison_Sent_By_Dec.txt")
 
 NY_Prison_Sentences_by_Decarceratory_aov <- aov(data = NY_Merged_Data , Percentage_Prison ~ Decarceratory)
 
@@ -679,8 +680,8 @@ data(package = 'palmerpenguins')
 
 NY_Merged_Data %>%
   drop_na(Decarceratory) %>%
-  ggplot(aes(fill = Election_Year, x = Decarceratory , y = Percentage_Prison)) + 
-  geom_boxplot() + 
+  ggplot(aes(x = Decarceratory , y = Percentage_Prison)) + 
+  geom_boxplot(aes(fill = Election_Year)) + 
   facet_wrap(~ Election_Year) +
   geom_signif(comparisons = list(c("0" , "1")) , 
     map_signif_level = TRUE,
@@ -698,7 +699,7 @@ NY_Merged_Data %>%
   theme(plot.title = element_text(hjust = 0.5))
 
 
-#is there a correlation between probation and prison
+s#is there a correlation between probation and prison
 
 cor.test(data = NY_Merged_Data , 
          ~ Percentage_Prison + Percentage_Probation)
