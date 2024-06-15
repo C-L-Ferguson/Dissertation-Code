@@ -1,0 +1,30 @@
+
+% Table created by stargazer v.5.2.3 by Marek Hlavac, Social Policy Institute. E-mail: marek.hlavac at gmail.com
+% Date and time: Tue, Feb 27, 2024 - 4:21:23 PM
+\begin{table}[!htbp] \centering 
+  \caption{P-Test Results} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & \multicolumn{1}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-2} 
+\\[-1.8ex] & Percentage\_Prison \\ 
+\hline \\[-1.8ex] 
+ Decarceratory1 & $-$1.996$^{***}$ \\ 
+  & (0.271) \\ 
+  & \\ 
+ Constant & 6.916$^{***}$ \\ 
+  & (0.077) \\ 
+  & \\ 
+\hline \\[-1.8ex] 
+Observations & 2,436 \\ 
+R$^{2}$ & 0.022 \\ 
+Adjusted R$^{2}$ & 0.021 \\ 
+Residual Std. Error & 3.635 (df = 2434) \\ 
+F Statistic & 54.336$^{***}$ (df = 1; 2434) \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Note:}  & \multicolumn{1}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\end{tabular} 
+\end{table} 

@@ -5,7 +5,9 @@ output: html_notebook
 
 
 Inputting Functions 
-```{r}
+```{r Inputting Libraries}
+library(gt)
+library(rstatix)
 library(ggplot2)
 library(tidyverse)
 library(dplyr)
@@ -15,31 +17,24 @@ library(tidyverse)
 library(sf)
 library(haven)
 library(knitr)
-install.packages("kableExtra")
 library(data.table)
-install.packages(c("readxl", "writexl"))
 library("writexl")
 library(broom)
-install.packages("pander")
 library(pander)
 library(scales)
-install.packages("estimatr")
 library(estimatr)
 library(kableExtra)
 library(rvest)
 library(stringr)
-install.packages("webshot2")
 library(webshot2)
-install.packages("stargazer")
 library(stargazer)
-install.packages("WRS2")
-install.packages("mc2d")
 library(mc2d)
 library(WRS2)
-options(PACKAGE_MAINFOLDER="C:/Users/...")
-install.packages("broom.mixed")
-install.packages ("palmerpenguins")
 library(ggsignif)
+library(schoRsch)
+library(xtable)
+library(pander)
+library(htest)
 ```
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
@@ -117,8 +112,18 @@ California_Merged_Data <- California_Merged_Data %>%
          Percentage_Split = Split_1170h / Total_Sentences * 100,
          Percentage_Straight = Straight_1170h / Total_Sentences * 100)
 
+
 write.csv(CA_Merged_Data, "C:/Users/carol/Downloads/California_Merged_Data.csv", row.names=FALSE)
 
+CA_Merged_Data <- read.csv(
+  "C:/Users/carol/Downloads/CA_Merged_Data_FEB.csv",
+  header = TRUE,
+  check.names = TRUE
+)
+
+CA_Merged_Data$Election_Year[is.na(CA_Merged_Data$Election_Year)] <- 0
+
+write.csv(CA_Merged_Data, "C:/Users/carol/Downloads/CA_Merged_Data_FEBU.csv", row.names=FALSE)
 
 ```
 
@@ -155,6 +160,9 @@ New_York_DA <- New_York_DA %>%
            "Contested_Primary" = "Contested.Primary." ,
            "Contested_General" = "Contested.General." ,
            "Election_Year" = "Election.Year." )
+
+
+
 
 ```
 
@@ -566,28 +574,31 @@ PA_Merged_Data <- PA_Merged_Data %>%
          Election_Year = Election.Year. %>%
            as.factor)
 
-write.csv(PA_Merged_Data, "C:/Users/carol/Downloads/PA_Merged_Data.csv", row.names=FALSE)
+PA_Merged_Data$Election_Year[is.na(PA_Merged_Data$Election_Year)] <- 0
+
+
+write.csv(PA_Merged_Data, "C:/Users/carol/Downloads/PA_Merged_Data_FEB.csv", row.names=FALSE)
 
 ```
 
 Load all cleaned data
 
-```{r}
+```{r Loading Clean Data}
 
 NY_Merged_Data<- read.csv(
-  "C:/Users/carol/Downloads/NY_Merged_Data.csv",
+  "C:/Users/carol/Downloads/NY_Merged_Data_FEB.csv",
   header = TRUE,
   check.names = F
 )
 
 PA_Merged_Data<- read.csv(
-  "C:/Users/carol/Downloads/PA_Merged_Data.csv",
+  "C:/Users/carol/Downloads/PA_Merged_Data_FEB.csv",
   header = TRUE,
   check.names = F
 )
 
 CA_Merged_Data <- read.csv(
-  "C:/Users/carol/Downloads/CA_Merged_Data.csv",
+  "C:/Users/carol/Downloads/CA_Merged_Data_FEB.csv",
   header = TRUE,
   check.names = F
 )
@@ -596,12 +607,21 @@ CA_Merged_Data <- read.csv(
 
 Analyzing NY Data
 
-```{r}
+```{r New York Analysis}
+
+
 NY_Merged_Data <- NY_Merged_Data %>%
   mutate(Decarceratory = Decarceratory %>%
            as.factor,
          Election_Year = Election_Year %>%
+           as.factor, 
+         Contested_General = Contested_General %>%
+           as.factor,
+         Did_Incumbent_Seek_Reelection = Did_Incumbent_Seek_Reelection %>%
+         as.factor,
+         Contested_Primary = Contested_Primary %>%
            as.factor) 
+
 
 NY_Prison_Sentences_by_Decarceratory <- lm(data = NY_Merged_Data , Percentage_Prison ~ Decarceratory)
 
@@ -609,7 +629,11 @@ class(NY_Prison_Sentences_by_Decarceratory)
 
 
 stargazer(NY_Prison_Sentences_by_Decarceratory,  title = "P-Test Results") %>%
+<<<<<<< HEAD:Ch 2 Dissertation Code.Rmd
   write_lines("C:/Users/carol/Downloads/NY_Prison_Sent_By_Dec.txt")
+=======
+  write_lines("NY_Prison_Sent_By_Dec.txt")
+>>>>>>> 7c30173173a6a92790086d6bdc9dda89dab9869c:Ch 2 Progressive DAs.Rmd
 
 NY_Prison_Sentences_by_Decarceratory_aov <- aov(data = NY_Merged_Data , Percentage_Prison ~ Decarceratory)
 
@@ -618,22 +642,25 @@ TurkeyHSD_NY_Prison_Sentences <- TukeyHSD(NY_Prison_Sentences_by_Decarceratory_a
 
 TurkeyHSD_NY_Prison_Sentences
 
-tidy_turkey(TurkeyHSD_NY_Prison_Sentences)
 
 #look at the means to see the difference
 
 
 summary(NY_Prison_Sentences_by_Decarceratory)
 
+stargazer(NY_Prison_Sentences_by_Decarceratory)
+
 #ggplot it
 
 ggplot(data = NY_Merged_Data , aes(Decarceratory, Percentage_Prison)) + 
   geom_boxplot()
 
-NY_Merged_Data %>%
+NY_Box_Plot1 <- NY_Merged_Data %>%
 drop_na(Decarceratory) %>%
   ggplot(aes(Decarceratory, Percentage_Prison)) +
   geom_boxplot()
+
+ggsave(NY_Box_Plot1 , file = "C:/Users/carol/Desktop/Dissertation Code/Dissertation-Code/Chapter 2 Visuals/NYboxplot1.png")
 
 #wilcox test compares medians 
 
@@ -649,7 +676,7 @@ wilcox_test_decarceratory <- wilcox.test(NY_Merged_Data %>%
               unlist)
 
 
-#still comparing medians. p values on the two main effects and the chi-square is the interaction between the two. Chi-square is a test of independence. So if two things are when you reject the null hypothesis you are saying that you cannot reject the null hypothesis that they are independent. So we do not have evidence showing dependence. 
+#still comparing medians. p values on the two main effects and the chi-square is the interaction between the two. Chi-square is a test of independence. So if two things are when you reject the null hypothesis you are saying that you cannot reject the null hypothesis that they are independent. So we do not have evidence showing dependence. Except these two are the same.
 
 med1way(data = NY_Merged_Data ,
         Percentage_Prison ~ Decarceratory)
@@ -657,8 +684,9 @@ med1way(data = NY_Merged_Data ,
 med2way_Dec_Election_Year <- med2way(data = NY_Merged_Data ,
         Percentage_Prison ~ Decarceratory + Election_Year)
 
-med2way_Dec_Election_Year
-summary(med2way_Dec_Election_Year)
+med2way_Dec_Election_Year_Primary <- med2way(data = NY_Merged_Data, Percentage_Prison ~ Decarceratory + Election_Year + Contested_Primary)
+
+
 
 #mean comparison
 
@@ -667,6 +695,12 @@ AOV_Mean_Dec_Election <- aov(data = NY_Merged_Data , Percentage_Prison ~ Decarce
 summary(AOV_Mean_Dec_Election)
 
 anova(AOV_Mean_Dec_Election)
+
+AOV_Mean_Dec_Election_Primary <- aov(data = NY_Merged_Data , Percentage_Prison ~ Decarceratory * Election_Year * Contested_Primary)
+
+summary(AOV_Mean_Dec_Election_Primary)
+
+anova(AOV_Mean_Dec_Election_Primary)
 #boxplot 
 #http://sthda.com/english/articles/24-ggpubr-publication-ready-plots/76-add-p-values-and-significance-levels-to-ggplots/
 
@@ -674,11 +708,9 @@ anova(AOV_Mean_Dec_Election)
 
 #work on fixing this plot to be easier to read 
 
-library(palmerpenguins)
-data(package = 'palmerpenguins')
 
 
-NY_Merged_Data %>%
+NY_Box_Plot_2 <- NY_Merged_Data %>%
   drop_na(Decarceratory) %>%
   ggplot(aes(x = Decarceratory , y = Percentage_Prison)) + 
   geom_boxplot(aes(fill = Election_Year)) + 
@@ -692,11 +724,13 @@ NY_Merged_Data %>%
   labs(
     x = "Decarceratory",
     y = "Percentage of Guilty Verdicts Sentenced to Prison",
-    title = "Differences in Prison Sentencing Percentage by Election Year",
+    title = "New York Differences in Prison Sentencing Percentage by Election Year",
     caption = "Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1"
   ) +
   theme_bw() +
-  theme(plot.title = element_text(hjust = 0.5))
+  theme(plot.title = element_text(hjust = 0.5)) 
+
+ggsave(NY_Box_Plot_2, file = "C:/Users/carol/Desktop/Dissertation Code/Dissertation-Code/Chapter 2 Visuals/NYboxplot2.png")
 
 
 s#is there a correlation between probation and prison
@@ -706,25 +740,80 @@ cor.test(data = NY_Merged_Data ,
 
 #graph above
 
-NY_Merged_Data %>%
+NY_Point_Plot1 <- 
+  NY_Merged_Data %>%
   ggplot(aes(color = Party , x = Percentage_Prison , y = Percentage_Probation)) + geom_point()
 
-# create an independent and dependent variable. Think about if you want to do a regression (y-intercept) or Anova
+ggsave(NY_Point_Plot1, file = "C:/Users/carol/Desktop/Dissertation Code/Dissertation-Code/Chapter 2 Visuals/NY_Point_Plot1.png")
+
+
+# create an independent and dependent variable. Think about if you want to do a regression (y-intercept) or Anova. I think for this I want to filter by decarceratory or not. 
 
 NY_Merged_Data_Model_Jail <-  
   lm(Percentage_Jail ~ Contested_Primary, data = NY_Merged_Data) 
 
+stargazer(NY_Merged_Data_Model_Jail,  title = "Percentage Jail by Contested Primary") %>%
+  write_lines("NY_Data_Model_Jail_and_Primary.txt")
 
 NY_Merged_Data_Model_Probation <- 
   lm(Percentage_Probation ~ Contested_Primary, data = NY_Merged_Data)
 
+stargazer(NY_Merged_Data_Model_Probation,  title = "Probation by Contested Primary") %>%
+  write_lines("NY_Data_Model_Probation.txt")
 
 NY_Merged_Data_Model_Fine <- 
   lm(Percentage_Fine ~ Contested_Primary, data = NY_Merged_Data)
 
+stargazer(NY_Merged_Data_Model_Fine,  title = "Fine by Contested Primary") %>%
+  write_lines("NY_Data_Model_Fine.txt")
 
 NY_Merged_Data_Model_Prison <- 
   lm(Percentage_Prison ~ Contested_Primary, data = NY_Merged_Data)
+
+stargazer(NY_Merged_Data_Model_Prison,  title = "Prison by Contested Primary") %>%
+  write_lines("NY_Data_Model_Prison.txt")
+
+# do this separated by decarceratory and not.  I need seek reelection, then consider election year, then consider contested primary
+
+NY_Decarceratory <- NY_Merged_Data %>%
+  filter(Decarceratory == 1)
+
+NY_Decarceratory_Model_Jail <-lm(Percentage_Jail ~ Did_Incumbent_Seek_Reelection + Contested_Primary + Election_Year, data = NY_Decarceratory) 
+
+NY_Decarceratory_Model_Probation <- 
+  lm(Percentage_Probation ~ Did_Incumbent_Seek_Reelection + Contested_Primary + Election_Year, data = NY_Decarceratory)
+
+NY_Decarceratory_Model_Fine <- 
+  lm(Percentage_Fine ~ Did_Incumbent_Seek_Reelection + Contested_Primary + Election_Year, data = NY_Decarceratory)
+
+NY_Decarceratory_Prison <- 
+  lm(Percentage_Prison ~ Did_Incumbent_Seek_Reelection + Contested_Primary + Election_Year, data = NY_Decarceratory)
+
+NY_Decarceratory_Sentences_LMs <- list(NY_Decarceratory_Prison, NY_Decarceratory_Model_Jail, NY_Decarceratory_Model_Probation, NY_Decarceratory_Model_Fine)
+
+NY_Decarceratory_Sentences_LMs <- list(NY_Decarceratory_Prison, NY_Decarceratory_Model_Jail, NY_Decarceratory_Model_Probation, NY_Decarceratory_Model_Fine)
+
+stargazer(NY_Decarceratory_Sentences_LMs, title = "Sentences by Re-Election, Contested Primary and Election Year, Decarceratory DAs", align = TRUE)
+
+#NonDecarceratory
+
+NY_NonDecarceratory <- NY_Merged_Data %>%
+  filter(Decarceratory == 0)
+
+NY_NonDecarceratory_Model_Jail <-lm(Percentage_Jail ~ Did_Incumbent_Seek_Reelection + Contested_Primary + Election_Year, data = NY_NonDecarceratory) 
+
+NY_NonDecarceratory_Model_Probation <- 
+  lm(Percentage_Probation ~ Did_Incumbent_Seek_Reelection + Contested_Primary + Election_Year, data = NY_NonDecarceratory)
+
+NY_NonDecarceratory_Model_Fine <- 
+  lm(Percentage_Fine ~ Did_Incumbent_Seek_Reelection + Contested_Primary + Election_Year, data = NY_NonDecarceratory)
+
+NY_NonDecarceratory_Prison <- 
+  lm(Percentage_Prison ~ Did_Incumbent_Seek_Reelection + Contested_Primary + Election_Year, data = NY_NonDecarceratory)
+
+NY_NonDecarceratory_Sentences_LMs <- list(NY_NonDecarceratory_Prison, NY_NonDecarceratory_Model_Jail, NY_NonDecarceratory_Model_Probation, NY_NonDecarceratory_Model_Fine)
+
+stargazer(NY_NonDecarceratory_Sentences_LMs, title = "New York: Sentences by Re-Election, Contested Primary and Election Year, Non-Decarceratory DAs", align = TRUE)
 
 #slope = estimate of contested_primary
 
@@ -737,20 +826,48 @@ summary(NY_Merged_Data_Model_Jail)
 
 
 
+#combining tables. Recall there is no partisan primary in CA. NEED HELP WITH THIS ONE. 
+
+NY_Merged_Data_Model_Prison <-  
+  t_test(Percentage_Prison ~ Contested_Primary, data = NY_Merged_Data, paired = FALSE) %>%
+  add_significance() 
+
+NY_Merged_Data_Model_Probation <- 
+  t_test(Percentage_Probation ~ Contested_Primary, data = NY_Merged_Data, paired = FALSE) %>%
+  add_significance() 
+
+NY_Merged_Data_Probation_combined_t <- 
+  rbind(NY_Merged_Data_Model_Prison, NY_Merged_Data_Model_Probation) %>%
+  gt() %>%
+  tab_row_group(label = "Group 1", rows = 1) %>%
+  tab_row_group(label = "Group 2", rows = 2)
+
+NY_Merged_Data_Probation_combined_t %>%
+  as_latex() %>%
+  as.character() %>% 
+  write_lines("NY_Merged_Data_Probation_Combined_T.txt")
+
+
+
 ```
 
 Analyzing CA Data
-```{r}
+```{r California Analysis}
 
 CA_Merged_Data <- CA_Merged_Data %>%
-  mutate(Decarceratory. = Decarceratory. %>%
+  mutate(Decarceratory = Decarceratory %>%
            as.factor,
-         Election.Year. = Election.Year. %>%
-           as.factor) 
+         Election_Year = Election_Year %>%
+           as.factor, 
+         Contested = Contested %>%
+           as.factor,
+         Did_Incumbent_Seek_Reelection = Did_Incumbent_Seek_Reelection %>%
+         as.factor) 
 
-CA_Prison_Sentences_by_Decarceratory <- aov(data = CA_Merged_Data , Percentage_Prison ~ Decarceratory.)
+CA_Prison_Sentences_by_Decarceratory <- lm(data = CA_Merged_Data , Percentage_Prison ~ Decarceratory)
 
-summary(CA_Prison_Sentences_by_Decarceratory)
+stargazer(CA_Prison_Sentences_by_Decarceratory,  title = "California Prison by Decarceratory") %>%
+  write_lines("CA_Prison_Sentences_by_Decarceratory.txt")
 
 
 TukeyHSD(CA_Prison_Sentences_by_Decarceratory)
@@ -758,12 +875,12 @@ TukeyHSD(CA_Prison_Sentences_by_Decarceratory)
 #the above might be interesting because it's not a partisan election? I am not totally sure if that actually tells us anything
 
 wilcox.test(CA_Merged_Data %>%
-              filter(Decarceratory. == 1) %>%
+              filter(Decarceratory == 1) %>%
               select(Percentage_Prison) %>%
               na.omit %>%
               unlist, 
             CA_Merged_Data %>%
-              filter(Decarceratory. == 0) %>%
+              filter(Decarceratory == 0) %>%
               select(Percentage_Prison) %>%
               na.omit %>%
               unlist)
@@ -771,32 +888,185 @@ wilcox.test(CA_Merged_Data %>%
 #still comparing medians
 
 med1way(data = CA_Merged_Data ,
-        Percentage_Prison ~ Decarceratory.)
+        Percentage_Prison ~ Decarceratory)
 
 med2way(data = CA_Merged_Data ,
-        Percentage_Prison ~ Decarceratory. + Election.Year.)
+        Percentage_Prison ~ Decarceratory + Election_Year)
 
 #boxplot
 
-CA_Merged_Data %>%
-  ggplot(aes(fill = Election.Year., x = Decarceratory. , y = Percentage_Prison)) + geom_boxplot() + facet_wrap(~ Election.Year.) 
+CA_Percentage_Prison_by_Decarceratory_BoxPlot <- CA_Merged_Data %>%
+  ggplot(aes(fill = Election_Year, x = Decarceratory , y = Percentage_Prison)) + geom_boxplot() + facet_wrap(~ Election_Year) 
 
+ggsave(CA_Percentage_Prison_by_Decarceratory_BoxPlot, file = "C:/Users/carol/Desktop/Dissertation Code/Dissertation-Code/Chapter 2 Visuals/CA_Box_Plot1.png")
+
+CA_Box_Plot_2_CH2 <- CA_Merged_Data %>%
+  drop_na(Decarceratory) %>%
+  ggplot(aes(x = Decarceratory , y = Percentage_Prison)) + 
+  geom_boxplot(aes(fill = Election_Year)) + 
+  facet_wrap(~ Election_Year) +
+  geom_signif(comparisons = list(c("0" , "1")) , 
+    map_signif_level = TRUE,
+    textsize = 6,
+    step_increase = .1
+  ) +
+  ylim(NA , 120) +
+  labs(
+    x = "Decarceratory",
+    y = "Percentage of Guilty Verdicts Sentenced to Prison",
+    title = "California Differences in Prison Sentencing Percentage by Election Year",
+    caption = "Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1"
+  ) +
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5)) 
+
+ggsave(CA_Box_Plot_2_CH2, file = "C:/Users/carol/Desktop/Dissertation Code/Dissertation-Code/Chapter 2 Visuals/CAboxplot2Ch2.png")
 #is there a correlation between probation and prison
 
-cor.test(data = CA_Merged_Data , 
+Cor_test_CA_prison_to_probation <- cor.test(data = CA_Merged_Data , 
          ~ Percentage_Prison + Percentage_Probation)
 
+stargazer(Cor_test_CA_prison_to_probation,  title = "California Prison to Probation") %>%
+  write_lines("Cor_test_CA_prison_to_probation.txt")
 #graph above
 
 
-CA_Merged_Data %>%
-  ggplot(aes(color = Decarceratory. , x = Prison , y = Probation)) + geom_point()
+CA_Prison_to_Probation_BoxPlot <- CA_Merged_Data %>%
+  ggplot(aes(color = Decarceratory, x = Percentage_Prison , y = Percentage_Probation)) + geom_point()
+
+ggsave(CA_Prison_to_Probation_BoxPlot, file = "C:/Users/carol/Desktop/Dissertation Code/Dissertation-Code/Chapter 2 Visuals/CA_Box_Plot3.png")
+
+#combining tables. Recall there is no partisan primary in CA. NEED HELP WITH THIS ONE. 
+
+CA_Merged_Data_Model_Prison <-  
+  t_test(Percentage_Prison ~ Contested, data = CA_Merged_Data, paired = FALSE) %>%
+  add_significance() 
+
+CA_Merged_Data_Model_Probation <- 
+  t_test(Percentage_Probation ~ Contested, data = CA_Merged_Data, paired = FALSE) %>%
+  add_significance() 
+
+CA_Merged_Data_Probation_combined_t <- 
+  rbind(CA_Merged_Data_Model_Prison, CA_Merged_Data_Model_Probation) %>%
+  gt() %>%
+  tab_row_group(label = "Group 1", rows = 1) %>%
+  tab_row_group(label = "Group 2", rows = 2)
+
+CA_Merged_Data_Probation_combined_t %>%
+  as_latex() %>%
+  as.character() %>% 
+  write_lines("CA_Merged_Data_Probation_Combined_T.txt")
+
+# create an independent and dependent variable. Think about if you want to do a regression (y-intercept) or Anova. I think for this I want to filter by decarceratory or not. 
+
+CA_Merged_Data_Model_Prison <-  
+  lm(Percentage_Prison ~ Contested, data = CA_Merged_Data) 
+
+stargazer(CA_Merged_Data_Model_Prison,  title = "Percentage Prison by Contested General") %>%
+  write_lines("CA_Merged_Data_Model_Prison.txt")
+
+CA_Merged_Data_Model_Probation <- 
+  lm(Percentage_Probation ~ Contested, data = CA_Merged_Data)
+
+stargazer(CA_Merged_Data_Model_Probation,  title = "Probation by Contested General") %>%
+  write_lines("CA_Data_Model_Probation.txt")
+
+CA_Merged_Data_Model_Split <- 
+  lm(Percentage_Split ~ Contested, data = CA_Merged_Data)
+
+stargazer(CA_Merged_Data_Model_Split,  title = "Split by Contested General") %>%
+  write_lines("CA_Data_Model_Split.txt")
+
+CA_Merged_Data_Model_Straight <- 
+  lm(Percentage_Straight ~ Contested, data = CA_Merged_Data)
+
+stargazer(CA_Merged_Data_Model_Straight,  title = "Straight by Contested General") %>%
+  write_lines("CA_Data_Model_Straight.txt")
+
+# do this separated by decarceratory and not. REMEMBER THOUGH I NEED THE DECARCERATORY DA TO BE SEEKING REELECTION. I need seek reelection, then consider election year, then consider contested primary
+
+CA_Decarceratory <- CA_Merged_Data %>%
+  filter(Decarceratory == 1)
+
+CA_Decarceratory_Model_Prison <-lm(Percentage_Prison ~  Did_Incumbent_Seek_Reelection + Contested + Election_Year, data = CA_Decarceratory) 
+
+CA_Decarceratory_Model_Probation <- 
+  lm(Percentage_Probation ~ Did_Incumbent_Seek_Reelection + Contested + Election_Year, data = CA_Decarceratory)
+
+CA_Decarceratory_Model_Split <- 
+  lm(Percentage_Split ~  Did_Incumbent_Seek_Reelection + Contested + Election_Year, data = CA_Decarceratory)
+
+CA_Decarceratory_Straight <- 
+  lm(Percentage_Straight ~  Did_Incumbent_Seek_Reelection + Contested + Election_Year, data = CA_Decarceratory)
+
+CA_Decarceratory_Sentences_LMs <- list(CA_Decarceratory_Model_Prison, CA_Decarceratory_Model_Probation, CA_Decarceratory_Model_Split, CA_Decarceratory_Straight)
+
+stargazer(CA_Decarceratory_Sentences_LMs, title = "Sentences by Re-Election, Contested General, and Election Year, Decarceratory DAs", align = TRUE)
+
+
+CA_NonDecarceratory <- CA_Merged_Data %>%
+  filter(Decarceratory == 0)
+
+CA_NonDecarceratory_Model_Prison <-lm(Percentage_Prison ~  Did_Incumbent_Seek_Reelection + Contested + Election_Year, data = CA_NonDecarceratory) 
+
+CA_NonDecarceratory_Model_Probation <- 
+  lm(Percentage_Probation ~ Did_Incumbent_Seek_Reelection + Contested + Election_Year, data = CA_NonDecarceratory)
+
+CA_NonDecarceratory_Model_Split <- 
+  lm(Percentage_Split ~  Did_Incumbent_Seek_Reelection + Contested + Election_Year, data = CA_NonDecarceratory)
+
+CA_NonDecarceratory_Straight <- 
+  lm(Percentage_Straight ~  Did_Incumbent_Seek_Reelection + Contested + Election_Year, data = CA_NonDecarceratory)
+
+CA_NonDecarceratory_Sentences_LMs <- list(CA_NonDecarceratory_Model_Prison, CA_NonDecarceratory_Model_Probation, CA_NonDecarceratory_Model_Split, CA_NonDecarceratory_Straight)
+
+stargazer(CA_NonDecarceratory_Sentences_LMs, title = "Sentences by Re-Election, Contested General, and Election Year, Non-Decarceratory DAs", align = TRUE)
+
+#slope = estimate of contested_primary
+
+# y = 6.95  - 1.29x 
+
+summary(CA_Merged_Data_Model_Prison)
+summary(CA_Merged_Data_Model_Probation)
+summary(CA_Merged_Data_Model_Split)
+summary(CA_Merged_Data_Model_Straight)
+
+#combining tables. Recall there is no partisan primary in CA. NEED HELP WITH THIS ONE. 
+
+CA_Merged_Data_Model_Prison <-  
+  t_test(Percentage_Prison ~ Contested, data = CA_Merged_Data, paired = FALSE) %>%
+  add_significance() 
+
+CA_Merged_Data_Model_Probation <- 
+  t_test(Percentage_Probation ~ Contested, data = CA_Merged_Data, paired = FALSE) %>%
+  add_significance() 
+
+CA_Merged_Data_Probation_combined_t <- 
+  rbind(CA_Merged_Data_Model_Prison, CA_Merged_Data_Model_Probation) %>%
+  gt() %>%
+  tab_row_group(label = "Group 1", rows = 1) %>%
+  tab_row_group(label = "Group 2", rows = 2)
+
+CA_Merged_Data_Probation_combined_t %>%
+  as_latex() %>%
+  as.character() %>% 
+  write_lines("CA_Merged_Data_Probation_Combined_T.txt")
 
 ```
 
-
 Analyzing PA Data
-```{r}
+```{r Pennsylvania Analysis}
+PA_Merged_Data <- PA_Merged_Data %>%
+  mutate(Decarceratory = Decarceratory %>%
+           as.factor,
+         Election_Year = Election_Year %>%
+           as.factor, 
+         Contested_General = Contested_General %>%
+           as.factor,
+         Did_Incumbent_Seek_Reelection = Did_Incumbent_Seek_Reelection %>%
+         as.factor,
+         Contested_Primary = Contested_Primary %>%
+           as.factor) 
 
 PA_Prison_Sentences_by_Decarceratory <- aov(data = PA_Merged_Data , Percentage_Prison ~ Decarceratory)
 
@@ -805,6 +1075,10 @@ summary(PA_Prison_Sentences_by_Decarceratory)
 
 TukeyHSD(PA_Prison_Sentences_by_Decarceratory)
 
+PA_Prison_Sentences_by_Decarceratory <- lm(data = PA_Merged_Data , Percentage_Prison ~ Decarceratory)
+
+stargazer(PA_Prison_Sentences_by_Decarceratory,  title = "Pennsylvania Prison by Decarceratory") %>%
+  write_lines("PA_Prison_Sentences_by_Decarceratory.txt")
 
 wilcox.test(PA_Merged_Data %>%
               filter(Decarceratory == 1) %>%
@@ -827,25 +1101,129 @@ med2way(data = PA_Merged_Data ,
 
 #boxplot
 
+PA_Percentage_Prison_by_Decarceratory_BoxPlot <- PA_Merged_Data %>%
+  ggplot(aes(fill = Election_Year, x = Decarceratory, y = Percentage_Prison)) + geom_boxplot() + facet_wrap(~ Election_Year) 
+
+ggsave(PA_Percentage_Prison_by_Decarceratory_BoxPlot, file = "C:/Users/carol/Desktop/Dissertation Code/Dissertation-Code/Chapter 2 Visuals/PA_Box_Plot1.png")
+
+#for Jonathan. This is showing up blank.It's because decarceratory is continuous here for some reason.  
+
+PA_Box_Plot_2 <- PA_Merged_Data %>%
+  drop_na(Decarceratory) %>%
+  ggplot(aes(x = Decarceratory , y = Percentage_Prison)) + 
+  geom_boxplot(aes(fill = Election_Year)) + 
+  facet_wrap(~ Election_Year) +
+  geom_signif(comparisons = list(c("0" , "1")) , 
+    map_signif_level = TRUE,
+    textsize = 6,
+    step_increase = .1
+  ) +
+  ylim(NA , 80) +
+  labs(
+    x = "Decarceratory",
+    y = "Percentage of Guilty Verdicts Sentenced to Prison",
+    title = "Pennsylvania Differences in Prison Sentencing Percentage by Election Year",
+    caption = "Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1"
+  ) +
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5))  
+
+ggsave(PA_Box_Plot_2, file = "C:/Users/carol/Desktop/Dissertation Code/Dissertation-Code/Chapter 2 Visuals/PAboxplot2.png")
+
+
 PA_Merged_Data %>%
   ggplot(aes(fill = Election_Year, x = Decarceratory , y = Percentage_Prison)) + geom_boxplot() + facet_wrap(~ Election_Year) 
 
 #is there a correlation between probation and prison
 
-cor.test(data = PA_Merged_Data , 
+Cor_test_PA_prison_to_probation <- cor.test(data = PA_Merged_Data , 
          ~ Percentage_Prison + Percentage_Probation)
+
+stargazer(Cor_test_PA_prison_to_probation,  title = "Pennsylvania Prison to Probation") %>%
+  write_lines("Cor_test_PA_prison_to_probation.txt")
 
 #graph above
 
-PA_Merged_Data %>%
-  ggplot(aes(color = Decarceratory , x = State_Prison , y = Probation)) + geom_point()
+PA_Prison_to_Probation_BoxPlot <- PA_Merged_Data %>%
+  ggplot(aes(color = Decarceratory , x = Percentage_Prison , y = Percentage_Probation)) + geom_point() +
+  scale_fill_discrete(guide = guide_legend(continuous = FALSE, label.continuous = F))
 
-```
-```
+ggsave(PA_Prison_to_Probation_BoxPlot, file = "C:/Users/carol/Desktop/Dissertation Code/Dissertation-Code/Chapter 2 Visuals/PA_Box_Plot3.png")
 
-VISUALIZATIONS
+#combining tables. Recall there is no partisan primary in CA. NEED HELP WITH THIS ONE. 
 
-```{r}
+PA_Merged_Data_Model_Prison <-  
+  t_test(Percentage_Prison ~ Contested.Primary., data = PA_Merged_Data, paired = FALSE) %>%
+  add_significance() 
 
+PA_Merged_Data_Model_Probation <- 
+  t_test(Percentage_Probation ~ Contested.Primary., data = PA_Merged_Data, paired = FALSE) %>%
+  add_significance() 
+
+PA_Merged_Data_Probation_combined_t <- 
+  rbind(PA_Merged_Data_Model_Prison, PA_Merged_Data_Model_Probation) %>%
+  gt() %>%
+  tab_row_group(label = "Group 1", rows = 1) %>%
+  tab_row_group(label = "Group 2", rows = 2)
+
+PA_Merged_Data_Probation_combined_t %>%
+  as_latex() %>%
+  as.character() %>% 
+  write_lines("PA_Merged_Data_Probation_Combined_T.txt")
+
+#get the significance of each factor for decarceratory and non-decarceratory 
+
+PA_Decarceratory <- PA_Merged_Data %>%
+  filter(Decarceratory == 1)
+
+PA_Decarceratory_Model_Jail <-lm(Percentage_Jail ~ Did_Incumbent_Seek_Reelection + Contested_Primary + Election_Year, data = PA_Decarceratory) 
+
+PA_Decarceratory_Model_Probation <- 
+  lm(Percentage_Probation ~ Did_Incumbent_Seek_Reelection + Contested_Primary + Election_Year, data = PA_Decarceratory)
+
+PA_Decarceratory_Model_Restorative_Sanction <- 
+  lm(Percentage_Restorative_Sanction ~ Did_Incumbent_Seek_Reelection + Contested_Primary + Election_Year, data = PA_Decarceratory)
+
+PA_Decarceratory_Model_Prison <- 
+  lm(Percentage_Prison ~ Did_Incumbent_Seek_Reelection + Contested_Primary + Election_Year, data = PA_Decarceratory)
+
+PA_Decarceratory_Model_Intermediate_Punishment <-   lm(Percentage_Intermediate_Punishment ~ Did_Incumbent_Seek_Reelection + Contested_Primary + Election_Year, data = PA_Decarceratory)
+
+
+PA_Decarceratory_Sentences_LMs <- list(PA_Decarceratory_Model_Prison, PA_Decarceratory_Model_Jail, PA_Decarceratory_Model_Probation, PA_Decarceratory_Model_Intermediate_Punishment, PA_Decarceratory_Model_Restorative_Sanction)
+
+stargazer(PA_Decarceratory_Sentences_LMs, title = "Sentences by Re-Election, Contested Primary and Election Year, Decarceratory DAs", align = TRUE)
+
+#NonDecarceratory
+
+PA_NonDecarceratory <- PA_Merged_Data %>%
+  filter(Decarceratory == 0)
+
+PA_NonDecarceratory_Model_Jail <-lm(Percentage_Jail ~ Did_Incumbent_Seek_Reelection + Contested_Primary + Election_Year, data = PA_NonDecarceratory) 
+
+PA_NonDecarceratory_Model_Probation <- 
+  lm(Percentage_Probation ~ Did_Incumbent_Seek_Reelection + Contested_Primary + Election_Year, data = PA_NonDecarceratory)
+
+PA_NonDecarceratory_Model_Restorative_Sanction <- 
+  lm(Percentage_Restorative_Sanction ~ Did_Incumbent_Seek_Reelection + Contested_Primary + Election_Year, data = PA_NonDecarceratory)
+
+PA_NonDecarceratory_Model_Prison <- 
+  lm(Percentage_Prison ~ Did_Incumbent_Seek_Reelection + Contested_Primary + Election_Year, data = PA_NonDecarceratory)
+
+PA_NonDecarceratory_Model_Intermediate_Punishment <-   lm(Percentage_Intermediate_Punishment ~ Did_Incumbent_Seek_Reelection + Contested_Primary + Election_Year, data = PA_NonDecarceratory)
+
+
+PA_NonDecarceratory_Sentences_LMs <- list(PA_NonDecarceratory_Model_Prison, PA_NonDecarceratory_Model_Jail, PA_NonDecarceratory_Model_Probation, PA_NonDecarceratory_Model_Intermediate_Punishment, PA_NonDecarceratory_Model_Restorative_Sanction)
+
+stargazer(PA_NonDecarceratory_Sentences_LMs, title = "Sentences by Re-Election, Contested Primary and Election Year, Non-Decarceratory DAs", align = TRUE)
+
+#slope = estimate of contested_primary
+
+# y = 6.95  - 1.29x 
+
+summary(NY_Merged_Data_Model_Prison)
+summary(NY_Merged_Data_Model_Fine)
+summary(NY_Merged_Data_Model_Probation)
+summary(NY_Merged_Data_Model_Jail)
 
 ```

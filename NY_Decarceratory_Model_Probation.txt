@@ -1,0 +1,36 @@
+
+% Table created by stargazer v.5.2.3 by Marek Hlavac, Social Policy Institute. E-mail: marek.hlavac at gmail.com
+% Date and time: Thu, Feb 29, 2024 - 11:53:14 AM
+\begin{table}[!htbp] \centering 
+  \caption{Probation by Contested Primary and Election Year, Decarceratory DAs} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & \multicolumn{1}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-2} 
+\\[-1.8ex] & Percentage\_Probation \\ 
+\hline \\[-1.8ex] 
+ Did\_Incumbent\_Seek\_Reelection1 & $-$0.971 \\ 
+  & (0.712) \\ 
+  & \\ 
+ Contested\_Primary1 & $-$4.126$^{***}$ \\ 
+  & (0.839) \\ 
+  & \\ 
+ Election\_Year & 0.676 \\ 
+  & (0.751) \\ 
+  & \\ 
+ Constant & 6.726$^{***}$ \\ 
+  & (0.569) \\ 
+  & \\ 
+\hline \\[-1.8ex] 
+Observations & 180 \\ 
+R$^{2}$ & 0.161 \\ 
+Adjusted R$^{2}$ & 0.147 \\ 
+Residual Std. Error & 4.083 (df = 176) \\ 
+F Statistic & 11.290$^{***}$ (df = 3; 176) \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Note:}  & \multicolumn{1}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\end{tabular} 
+\end{table} 

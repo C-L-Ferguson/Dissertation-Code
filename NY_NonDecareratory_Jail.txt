@@ -1,0 +1,42 @@
+
+% Table created by stargazer v.5.2.3 by Marek Hlavac, Social Policy Institute. E-mail: marek.hlavac at gmail.com
+% Date and time: Thu, Feb 29, 2024 - 11:54:30 AM
+\begin{table}[!htbp] \centering 
+  \caption{Jail by Contested Primary NonDecarcreatory DAs} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & \multicolumn{1}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-2} 
+\\[-1.8ex] & Percentage\_Jail \\ 
+\hline \\[-1.8ex] 
+ Did\_Incumbent\_Seek\_Reelection0 & $-$0.779 \\ 
+  & (2.804) \\ 
+  & \\ 
+ Did\_Incumbent\_Seek\_Reelection1 & 0.326 \\ 
+  & (2.798) \\ 
+  & \\ 
+ Contested\_Primary0 & $-$0.162 \\ 
+  & (0.404) \\ 
+  & \\ 
+ Contested\_Primary1 &  \\ 
+  &  \\ 
+  & \\ 
+ Election\_Year & $-$0.416 \\ 
+  & (0.300) \\ 
+  & \\ 
+ Constant & 13.771$^{***}$ \\ 
+  & (2.767) \\ 
+  & \\ 
+\hline \\[-1.8ex] 
+Observations & 2,016 \\ 
+R$^{2}$ & 0.007 \\ 
+Adjusted R$^{2}$ & 0.006 \\ 
+Residual Std. Error & 5.533 (df = 2011) \\ 
+F Statistic & 3.792$^{***}$ (df = 4; 2011) \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Note:}  & \multicolumn{1}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\end{tabular} 
+\end{table} 

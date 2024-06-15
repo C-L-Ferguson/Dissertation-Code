@@ -1,0 +1,14 @@
+\begin{longtable}{lrrrrrrrrl}
+\toprule
+.y. & group1 & group2 & n1 & n2 & statistic & df & p & p.adj & p.adj.signif \\ 
+\midrule\addlinespace[2.5pt]
+\multicolumn{10}{l}{Group 2} \\ 
+\midrule\addlinespace[2.5pt]
+Percentage\_Probation & 0 & 1 & 1012 & 546 & 1.131932 & 1310.353 & 0.258 & 0.258 & ns \\ 
+\midrule\addlinespace[2.5pt]
+\multicolumn{10}{l}{Group 1} \\ 
+\midrule\addlinespace[2.5pt]
+Percentage\_Prison & 0 & 1 & 1012 & 546 & 1.138059 & 1339.790 & 0.255 & 0.255 & ns \\ 
+\bottomrule
+\end{longtable}
+

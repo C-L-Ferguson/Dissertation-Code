@@ -1,0 +1,33 @@
+
+% Table created by stargazer v.5.2.3 by Marek Hlavac, Social Policy Institute. E-mail: marek.hlavac at gmail.com
+% Date and time: Tue, Feb 27, 2024 - 4:21:36 PM
+\begin{table}[!htbp] \centering 
+  \caption{Probation by Contested Primary} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & \multicolumn{1}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-2} 
+\\[-1.8ex] & Percentage\_Probation \\ 
+\hline \\[-1.8ex] 
+ Contested\_Primary0 & $-$2.630 \\ 
+  & (2.820) \\ 
+  & \\ 
+ Contested\_Primary1 & $-$3.268 \\ 
+  & (2.840) \\ 
+  & \\ 
+ Constant & 13.697$^{***}$ \\ 
+  & (2.817) \\ 
+  & \\ 
+\hline \\[-1.8ex] 
+Observations & 2,406 \\ 
+R$^{2}$ & 0.002 \\ 
+Adjusted R$^{2}$ & 0.001 \\ 
+Residual Std. Error & 5.634 (df = 2403) \\ 
+F Statistic & 1.884 (df = 2; 2403) \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Note:}  & \multicolumn{1}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\end{tabular} 
+\end{table} 
