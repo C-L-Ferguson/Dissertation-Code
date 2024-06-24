@@ -1,0 +1,7 @@
+"0","```r
+Chicago_Offense$Progressive_Prosecutor <- ifelse(Chicago_Offense$Year>=2017, 1, 0)
+
+```"
+"1","Error in `$<-.data.frame`(`*tmp*`, Progressive_Prosecutor, value = logical(0)) : 
+  replacement has 0 rows, data has 294440
+"

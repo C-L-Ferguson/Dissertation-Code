@@ -1,0 +1,73 @@
+---
+title: "Chapter 3: Specific Offenses"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r Data Cleaning}
+
+Philadelphia_Offense <- read.csv(
+  "C:/Users/carol/Downloads/Case_Outcomes_City_Wide.csv",
+  header = TRUE,
+  check.names = TRUE
+)
+
+# create dates dataframe
+
+class(Philadelphia_Offense$day)
+
+Philadelphia_Offense$Year = substr(Philadelphia_Offense$day, 1, 4)
+Philadelphia_Offense$Month = substr(Philadelphia_Offense$day, 6, 7)
+
+Philadelphia_Offense <- Philadelphia_Offense %>% 
+  mutate(Quarter = ceiling(as.numeric(Philadelphia_Offense$Month) / 3))
+ 
+Philadelphia_Offense$Progressive_Prosecutor <- ifelse(Philadelphia_Offense$Year>=2018, 1, 0)
+
+Philadelphia_Offense$Incumbent_Election_Year <- ifelse(Philadelphia_Offense$Year == 2013 | Philadelphia_Offense$Year == 2021 , 1, 0)
+
+Philadelphia_Offense %>%
+  filter(Year == 2021) %>%
+  select(Incumbent_Election_Year)
+
+write.csv(Philadelphia_Offense, "C:/Users/carol/Downloads/Philadelphia_Offense.csv", row.names=FALSE)
+
+Chicago_Offense <- read.csv(
+  "C:/Users/carol/Downloads/Chicago_Offense.csv",
+  header = TRUE,
+  check.names = TRUE
+)
+
+Chicago_Offense$Sentencing_Year = substr(Chicago_Offense$SENTENCE_DATE, 7, 10)
+Chicago_Offense$Sentencing_Month = substr(Chicago_Offense$SENTENCE_DATE, 1, 2)
+
+Chicago_Offense <- Chicago_Offense %>% 
+  mutate(Sentencing_Quarter = ceiling(as.numeric(Chicago_Offense$Sentencing_Month) / 3))
+
+#if you were sentenced in 2017 or greater, you were sentenced under a progressive, Kim Foxx. 
+Chicago_Offense$Progressive_Prosecutor <- ifelse(Chicago_Offense$Sentencing_Year>=2017, 1, 0)
+
+
+write.csv(Chicago_Offense, "C:/Users/carol/Downloads/Chicago_Offense.csv", row.names=FALSE)
+
+
+
+```
+
+```{r Chicago}
+unique(Chicago_Offense$CHARGE_DISPOSITION)
+unique(Chicago_Offense$DISPOSITION_CHARGED_OFFENSE_TITLE)
+
+#looking at reasons for dismissal
+Reasons_For_Dismissal <- Chicago_Offense %>%
+  filter(CHARGE_DISPOSITION == "Case Dismissed") %>%
+  select(CHARGE_DISPOSITION_REASON)
+unique(Reasons_For_Dismissal)
+
+
+
+```
+
